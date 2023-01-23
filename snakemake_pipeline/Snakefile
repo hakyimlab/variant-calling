@@ -8,8 +8,6 @@ import os, glob
 
 configfile: "metadata/call_genotypes_config.json"
 
-
-
 def prepare_srr_list():
     merge_info_file = './metadata/merge_info.txt' #config['merge_info']
     minfo = pd.read_table(merge_info_file, sep='\t', header=None)
@@ -155,6 +153,9 @@ if not os.path.isdir(LOG_DIR):
 if not os.path.isdir(TMP_DIR):
     os.makedirs(TMP_DIR)
 
+# output directories and all that
+
+
 # rule order
 ruleorder: bwa_align_single > bwa_align_paired
 ruleorder: trim_fastq_single > trim_fastq_paired
@@ -272,7 +273,7 @@ rule bwa_align_paired:
 # == Merge the bam files ===
 rule merge_and_recalibrate_bam_files:
     input:
-        lambda wildcards: expand("data/raw_samples/aligned_fastq/{individual}.bam", individual=grouping_dict[wildcards.individual])
+        lambda wildcards: expand("data/raw_samples/aligned_fastq/{ind_srrs}.bam", ind_srrs=grouping_dict[wildcards.individual])
     output:
         merged_bam_file_norg="data/raw_samples/merged_bam/{individual}_norg.bam",
         merged_bam_file="data/raw_samples/merged_bam/{individual}.bam",
@@ -312,7 +313,7 @@ rule merge_and_recalibrate_bam_files:
 # === CALL HAPLOTYPES ===
 rule call_haplotypes:
     input:
-        recalibrated_bam_file="data/raw_samples/recalibrated_bam/{individual}.bam"
+        recalibrated_bam_file=rules.merge_and_recalibrate_bam_files.output.recalibrated_bam_file
     output:
         gvcf_file="data/gvcf_files/{individual}.g.vcf.gz",
         reblocked_gvcf_file="data/gvcf_files/{individual}.reblocked.g.vcf.gz"
@@ -333,7 +334,7 @@ rule call_haplotypes:
 #=== CREATE DATABASE ===
 rule create_variants_DB:
     input:
-        reblocked_gvcfs=expand("data/gvcf_files/{individual}.reblocked.g.vcf.gz", individual=individuals)
+        reblocked_gvcfs=expand(rules.call_haplotypes.output.reblocked_gvcf_file, individual=individuals)
     output:
         scratch_chr_db=os.path.join(scratch_folder, "{chr}_db"),
         variant_chr_db="data/variants_DB/{chr}_db"

@@ -1,0 +1,3 @@
+AttributeError in line 336 of /home/temi/Dropbox/phd_journey/lab-work/lab-stuff/variant-calling/snakemake_pipeline/Snakefile:
+'Namedlist' object has no attribute 'reblocked_gvcf_file'
+  File "/home/temi/Dropbox/phd_journey/lab-work/lab-stuff/variant-calling/snakemake_pipeline/Snakefile", line 336, in <module>
