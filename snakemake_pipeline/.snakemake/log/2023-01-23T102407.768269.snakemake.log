@@ -1,0 +1,29 @@
+Building DAG of jobs...
+MissingInputException in rule all  in line 163 of /home/temi/Dropbox/phd_journey/lab-work/lab-stuff/variant-calling/snakemake_pipeline/Snakefile:
+Missing input files for rule all:
+    affected files:
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr17_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr2_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr3_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr6_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chrX_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr19_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr14_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr11_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr13_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr16_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr1_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr12_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr21_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr22_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr20_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chrM_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr5_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr7_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr15_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr9_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr10_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr18_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr8_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chr4_unphased_genotypes.vcf.gz
+        data/final_vcfs/phased_chromosomes/call_genotypes_2023_chrY_unphased_genotypes.vcf.gz

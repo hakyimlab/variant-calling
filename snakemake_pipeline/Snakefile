@@ -1,8 +1,6 @@
 #SAMPLES = ['SRR13105357', 'SRR13105384']
 #print(SAMPLES)
-LOG_DIR = 'log/'
-TMP_DIR = 'tmp/'
-BWA_INDEX = 'resource/alignment/index'
+
 
 prefetch_software = "/home/temi/software/sratoolkit.3.0.0-ubuntu64/bin/prefetch"
 import pandas as pd
@@ -10,10 +8,7 @@ import os, glob
 
 configfile: "metadata/call_genotypes_config.json"
 
-if not os.path.isdir(LOG_DIR):
-    os.makedirs(LOG_DIR)
-if not os.path.isdir(TMP_DIR):
-    os.makedirs(TMP_DIR)
+
 
 def prepare_srr_list():
     merge_info_file = './metadata/merge_info.txt' #config['merge_info']
@@ -150,6 +145,15 @@ variants_db = config["variants_db"]
 chromosomes = pd.read_csv(config["chromosomes"], header=None).iloc[:, 0].tolist()
 project_name = config["project_name"]
 gmap_dir = config['genetic_map']['folder']
+LOG_DIR = 'log/'
+TMP_DIR = 'tmp/'
+BWA_INDEX = 'resource/alignment/index'
+
+
+if not os.path.isdir(LOG_DIR):
+    os.makedirs(LOG_DIR)
+if not os.path.isdir(TMP_DIR):
+    os.makedirs(TMP_DIR)
 
 # rule order
 ruleorder: bwa_align_single > bwa_align_paired
@@ -164,10 +168,10 @@ rule all:
         expand("data/raw_samples/deduplicated_bam/{individual}.bam", individual=individuals),
         expand("data/raw_samples/recalibrated_bam/{individual}.bam", individual=individuals),
         expand("data/gvcf_files/{individual}.reblocked.g.vcf.gz", individual=individuals),
-        expand("{scratch_dir}/{chr}_db", chr=chromosomes, scratch_dir=scratch_folder)
-        #expand("data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz", chr=chromosomes, project_name=project_name)
-        #expand("data/final_vcfs/phased_chromosomes/{project_name}_{chr}_phased_genotypes.vcf.gz", chr=chromosomes, project_name=project_name),
-        # expand("data/final_vcfs/phased/{project_name}_merged_phased_genotypes.vcf.gz", project_name=project_name)
+        expand(os.path.join(scratch_folder, "{chr}_db"), chr=chromosomes),
+        expand(os.path.join("data/final_vcfs/unphased_chromosomes/", f"{project_name}_{{chr}}_unphased_genotypes.vcf.gz"), chr=chromosomes),
+        expand(os.path.join("data/final_vcfs/phased_chromosomes/", f"{project_name}_{{chr}}_unphased_genotypes.vcf.gz"), chr=chromosomes),
+        expand("data/final_vcfs/phased/{project_name}_merged_phased_genotypes.vcf.gz", project_name=project_name)
 
 # rule prefetch_files:  # don't need an input
 #     output:
@@ -331,68 +335,73 @@ rule create_variants_DB:
     input:
         reblocked_gvcfs=expand("data/gvcf_files/{individual}.reblocked.g.vcf.gz", individual=individuals)
     output:
-        chr_db="{scratch_dir}/{chr}_db"
-        #variant_chr_db="data/variants_DB/{chr}_db"
+        scratch_chr_db=os.path.join(scratch_folder, "{chr}_db"),
+        variant_chr_db="data/variants_DB/{chr}_db"
     params:
         input_samples=lambda wildcards, input:' -V '.join(input.reblocked_gvcfs),
-        #chr="{chr}",
-        #scratch_space=lambda wildcards, output: os.path.dirname(output.variant_chr_db),
+        #scratch_dir=lambda wildcards, output: os.path.dirname(output.scratch_chr_db),
         temporary_dir=TMP_DIR
     message:
         "[CREATING VARIANTS DB] {wildcards}"
-    # log:
-    #     "data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz"
-        #lambda wildcards, output: f"log/create_db/{os.path.basename(output.chr_db)}"
+    log:
+        os.path.join(LOG_DIR, 'create_db/{chr}.log')
     shell:
         """
-        (gatk GenomicsDBImport -V {params.input_samples} --genomicsdb-workspace-path {wildcards.scratch_dir}/{wildcards.chr}_db --intervals {wildcards.chr} --tmp-dir {params.temporary_dir} && cp -r {wildcards.scratch_dir}/{wildcards.chr}_db data/variants_DB/{wildcards.chr}_db) 2> {log}
+        (gatk GenomicsDBImport -V {params.input_samples} --genomicsdb-workspace-path {output.scratch_chr_db} --intervals {wildcards.chr} --tmp-dir {params.temporary_dir} && cp -r {output.scratch_chr_db} {output.variant_chr_db}) 2> {log}
         """
 
 
-# # === joint calling === "data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz
-# rule genotype_gvcfs:
-#     input:
-#         variant_chr_db="data/variants_DB/{chr}_db"
-#         #variant_chr_db=rules.create_variants_DB.output.variant_chr_db
-#     output:
-#         unphased_chr_vcf="data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz"
-#     params:
-#         genome_file=genome_file
-#         #variant_chr_db="data/variants_DB/{chr}_db"
-#     # log:
-#     #     "log/genotyping/{chr}.log"
-#     message:
-#         "Genotyping {wildcards}"
-#     shell:
-#         """
-#         (gatk GenotypeGVCFs -R {params.genome_file} -V gendb://{input.variant_chr_db} -O {output.unphased_chr_vcf}) 2> {log}
-#         """     
+# === joint calling === "data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz
+rule genotype_gvcfs:
+    input:
+        #variant_chr_db="data/variants_DB/{chr}_db"
+        variant_chr_db=rules.create_variants_DB.output.variant_chr_db
+    output:
+        unphased_chr_vcf=os.path.join("data/final_vcfs/unphased_chromosomes/", f"{project_name}_{{chr}}_unphased_genotypes.vcf.gz")
+    params:
+        genome_file=genome_file
+        #variant_chr_db="data/variants_DB/{chr}_db"
+    log:
+        os.path.join(LOG_DIR, 'genotype_gvcfs/{chr}_unphased.log')
+    message:
+        "Genotyping {wildcards.chr}"
+    shell:
+        """
+        (gatk GenotypeGVCFs -R {params.genome_file} -V gendb://{input.variant_chr_db} -O {output.unphased_chr_vcf}) 2> {log}
+        """     
 
-# === phase vcfs ===
-# rule phase_vcfs:
-#     input:
-#         #unphased_chr_vcf="data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz"
-#         unphased_chr_vcf=rules.genotype_gvcfs.output.unphased_chr_vcf
-#     output:
-#         phased_chr_vcf="data/final_vcfs/phased_chromosomes/{project_name}_{chr}_phased_genotypes.vcf.gz"
-#     threads: 4
-#     shell:
-#         """
-#         shapeit4 --input {input.unphased_chr_vcf} --map {gmap_dir}/{wildcards.chr}.b38.gmap.gz --region {wildcards.chr} --output {output.phased_chr_vcf} --thread 4 && tabix -p vcf {output.phased_chr_vcf}
-#         """
+#=== phase vcfs ===
+rule phase_vcfs:
+    input:
+        #unphased_chr_vcf="data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz"
+        unphased_chr_vcf=rules.genotype_gvcfs.output.unphased_chr_vcf
+    output:
+        phased_chr_vcf=os.path.join("data/final_vcfs/phased_chromosomes/", f"{project_name}_{{chr}}_unphased_genotypes.vcf.gz")
+    threads: 4
+    log:
+        os.path.join(LOG_DIR, 'genotype_gvcfs/{chr}_phased.log')
+    params:
+        gmap_dir=gmap_dir
+    shell:
+        """
+        (shapeit4 --input {input.unphased_chr_vcf} --map {params.gmap_dir}/{wildcards.chr}.b38.gmap.gz --region {wildcards.chr} --output {output.phased_chr_vcf} --thread 4 && tabix -p vcf {output.phased_chr_vcf}) 2> {log}
+        """
 
-# # === gather the phased vcfs ===
-# rule gather_vcfs:
-#     input:
-#         all_phased_chr_vcf=expand("data/final_vcfs/phased_chromosomes/{project_name}_{chr}_phased_genotypes.vcf.gz", chr=chromosomes, project_name=project_name)
-#     output:
-#         final_vcf_file="data/final_vcfs/phased/{project_name}_merged_phased_genotypes.vcf.gz"
-#     params:
-#         chr="{wildcards.chr}"
-#     message:
-#         "[GATHERING VCFs] for project: {project_name}"
-#     shell:
-#         """
-#         bcftools concat {input.all_phased_chr_vcf} -o {output.final_vcf_file} -O z && tabix -p vcf {output.final_vcf_file}
-#        """
+# === gather the phased vcfs ===
+rule gather_vcfs:
+    input:
+        all_phased_chr_vcf=expand(rules.phase_vcfs.output.phased_chr_vcf, chr=chromosomes)
+        #all_phased_chr_vcf=expand("data/final_vcfs/phased_chromosomes/{project_name}_{chr}_phased_genotypes.vcf.gz", chr=chromosomes, project_name=project_name)
+    output:
+        final_vcf_file="data/final_vcfs/phased/{project_name}_merged_phased_genotypes.vcf.gz"
+    params:
+        chr="{wildcards.chr}"
+    message:
+        "[GATHERING VCFs] for project: {project_name}"
+    log:
+        os.path.join(LOG_DIR, 'gather_vcfs/{project_name}.log')
+    shell:
+        """
+        (bcftools concat {input.all_phased_chr_vcf} -o {output.final_vcf_file} -O z && tabix -p vcf {output.final_vcf_file}) 2> {log}
+        """
 
