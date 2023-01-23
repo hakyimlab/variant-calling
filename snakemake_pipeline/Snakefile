@@ -1,0 +1,398 @@
+#SAMPLES = ['SRR13105357', 'SRR13105384']
+#print(SAMPLES)
+LOG_DIR = 'log/'
+TMP_DIR = 'tmp/'
+BWA_INDEX = 'resource/alignment/index'
+
+prefetch_software = "/home/temi/software/sratoolkit.3.0.0-ubuntu64/bin/prefetch"
+import pandas as pd
+import os, glob
+
+configfile: "metadata/call_genotypes_config.json"
+
+if not os.path.isdir(LOG_DIR):
+    os.makedirs(LOG_DIR)
+if not os.path.isdir(TMP_DIR):
+    os.makedirs(TMP_DIR)
+
+def prepare_srr_list():
+    merge_info_file = './metadata/merge_info.txt' #config['merge_info']
+    minfo = pd.read_table(merge_info_file, sep='\t', header=None)
+    lofl = [ea.split(',') for ea in minfo[1].tolist()]
+    final_list = [item for subitem in lofl for item in subitem]
+
+    return(final_list)
+
+def return_read_group_information():
+    merge_info_file = './metadata/merge_info.txt' #config['merge_info']
+    minfo = pd.read_table(merge_info_file, sep='\t', header=None)
+    rg_dict = {}
+    for i, individual in enumerate(minfo[0].tolist()):
+        rg_dict[individual] = minfo.iloc[i, 2:].values.tolist()
+    return(rg_dict)
+
+def grouping_information():
+    minfo = pd.read_table('./metadata/merge_info.txt', sep='\t', header=None)
+    group_keys = minfo[0]
+    group_list = [ea.split(',') for ea in minfo[1].tolist()]
+
+    return(dict(zip(group_keys, group_list)))
+
+def split_sras(sra_list):
+    return list(set([s.split('_')[0] for s in sra_list]))
+
+def create_sra_num_dict(sra_list):
+    keys = list(set([s.split('_')[0] for s in sra_list]))
+    out_dict = {}
+    for k in keys:
+        out_dict[k] = []
+        for s in sra_list:
+            if (s.startswith(k)) and (not s in out_dict[k]):
+                out_dict[k].append(s)
+    return(out_dict)
+
+def subset_for(gather_dict, which):
+    return(gather_dict[which])
+
+def create_gather(gather_dict, out_type='list'):
+    out_list = {}
+    for k in gather_dict.keys():
+        out_list[k] = []
+        if len(gather_dict[k]) == 1:
+            out_list[k].append(f'{k}_trimmed.fq.gz')
+        elif len(gather_dict[k]) == 2:
+            for i,s in enumerate(gather_dict[k]):
+                out_list[k].append(f'{k}_{i+1}_val_{i+1}.fq.gz')
+    
+    if out_type == 'list':
+        return [l for l in list(out_list.values()) for l in l]
+    elif out_type == 'dict':
+        return(out_list)
+
+def create_trim_inputs(gather_dict, which):
+    if len(gather_dict[which]) == 1:
+        return([f'{which}_trimmed.fq.gz'])
+    elif len(gather_dict[which]) == 2:
+        output = []
+        for i,s in enumerate(gather_dict[which]): 
+            output.append(f'{which}_{i+1}_val_{i+1}.fq.gz')
+        return(output)
+
+def create_prefetch_outputs(gather_dict, which):
+    if len(gather_dict[which]) == 1:
+        return([f'{which}.fastq.gz'])
+    elif len(gather_dict[which]) == 2:
+        output = []
+        for i,s in enumerate(gather_dict[which]): 
+            output.append(f'{which}_{i+1}.fastq.gz')
+        return(output)
+
+def create_sra_num_list(gather_dict, which):
+    if len(gather_dict[which]) == 1:
+        return([f'{which}_trimmed.fq.gz'])
+    elif len(gather_dict[which]) == 2:
+        output = []
+        for i,s in enumerate(gather_dict[which]): 
+            output.append(f'{which}_{i+1}_val_{i+1}.fq.gz')
+        return(output)
+
+
+# create_trim_inputs(gather_by(sra_files), 'SRR13105377')
+# create_gather(gather_by(sra_files))
+# SAMPLES = prepare_srr_list()
+# print(SAMPLES)
+
+# sra_files = ['SRR13105357', 'SRR13105384', 'SRR13105377_1', 'SRR13105377_2']
+# SAMPLES = ['SRR13105357', 'SRR13105384', 'SRR13105377']
+#sample_assembly = gather_by(sra_files)
+#print(sample_assembly)
+
+grouping_dict = grouping_information()
+#print(grouping_dict)
+
+SAMPLES = [l for l in list(grouping_dict.values()) for l in l]
+#print(SAMPLES)
+
+sra_files = []
+for sr in SAMPLES[0:10]:
+    sra_files.append(f'{sr}_1')
+    sra_files.append(f'{sr}_2')
+sra_files.extend(SAMPLES[10:])
+sra_files = list(set(sra_files))
+#print(sra_files)
+
+sra_num_grouping = create_sra_num_dict(sra_files)
+#print(sra_num_grouping)
+
+trimming_grouping = {s: create_trim_inputs(sra_num_grouping, s) for s in SAMPLES}
+fastq_files = [l for l in list(trimming_grouping.values()) for l in l]
+#print(fastq_files)
+
+SRA_FILES_BASENAMES = sra_files
+#print(SRA_FILES_BASENAMES)
+
+#print(' '.join([f'{sr}.fastq.gz' for sr in sra_files]))
+
+# SRA_FILES_BASENAMES = glob_wildcards(f"data/raw_samples/raw_fastq/{{SRA_file_basename}}.fastq.gz").SRA_file_basename
+# print(SRA_FILES_BASENAMES)
+
+# 
+individuals = list(grouping_dict.keys())
+#print(individuals)
+
+# read group dictionary
+read_groups = return_read_group_information()
+known_variants_files = [f"--known-sites {os.path.join(config['variants_resource']['folder'], v)}" for v in config['variants_resource']['files']]
+genome_file = [f"{os.path.join(config['genome_resource']['folder'], v)}" for v in config['genome_resource']['files']]
+bwa_index_file = f"{config['bwa_resource']['folder']}"
+scratch_folder = config['scratch_folder']
+variants_db = config["variants_db"]
+chromosomes = pd.read_csv(config["chromosomes"], header=None).iloc[:, 0].tolist()
+project_name = config["project_name"]
+gmap_dir = config['genetic_map']['folder']
+
+# rule order
+ruleorder: bwa_align_single > bwa_align_paired
+ruleorder: trim_fastq_single > trim_fastq_paired
+
+# === one rule to rule them all ===
+rule all:
+    input:
+        expand("data/raw_samples/trimmed_fastq/{sample}", sample=fastq_files),
+        expand("data/raw_samples/aligned_fastq/{sample}.bam", sample=SAMPLES),
+        expand("data/raw_samples/merged_bam/{individual}.bam", individual=individuals),
+        expand("data/raw_samples/deduplicated_bam/{individual}.bam", individual=individuals),
+        expand("data/raw_samples/recalibrated_bam/{individual}.bam", individual=individuals),
+        expand("data/gvcf_files/{individual}.reblocked.g.vcf.gz", individual=individuals),
+        expand("{scratch_dir}/{chr}_db", chr=chromosomes, scratch_dir=scratch_folder)
+        #expand("data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz", chr=chromosomes, project_name=project_name)
+        #expand("data/final_vcfs/phased_chromosomes/{project_name}_{chr}_phased_genotypes.vcf.gz", chr=chromosomes, project_name=project_name),
+        # expand("data/final_vcfs/phased/{project_name}_merged_phased_genotypes.vcf.gz", project_name=project_name)
+
+# rule prefetch_files:  # don't need an input
+#     output:
+#         fastq_file="data/raw_samples/raw_fastq/{sra_file}.fastq.gz"
+#     threads: 4
+#     params:
+#         sra_file="{sra_file}",
+#         rawfastq_dir="data/raw_samples/raw_fastq"
+#     shell:
+#         """
+#         echo "SAMPLE is {wildcards}"
+#         {prefetch_software} {params.sra_file} -f yes -o {params.sra_file}
+#         parallel-fastq-dump -s {params.sra_file} --threads {threads} --outdir {params.rawfastq_dir} --tmpdir {TMP_DIR} --split-3 --gzip
+#         """
+
+# === trim the fastq files ===
+rule trim_fastq_single:
+    input:
+        rIn="data/raw_samples/raw_fastq/{sample}.fastq.gz",
+    output:
+        rOut="data/raw_samples/trimmed_fastq/{sample}_trimmed.fq.gz"
+    params:
+        #output_dir="data/raw_samples/trimmed_fastq",
+        output_dir=lambda wildcards, output: os.path.dirname(output.rOut),
+        sample_name="{sample}"
+    message: "[TRIMMING] single sample for {params.sample_name}"
+    log:
+        "log/trim/{sample}.log"
+    shell:
+        """"
+        (trim_galore --single --phred33 --cores 4 --stringency 3 --illumina {input.rIn} --output_dir {params.output_dir}) 2> {log}
+        """
+
+rule trim_fastq_paired:
+    input:
+        r1="data/raw_samples/raw_fastq/{sample}_1.fastq.gz", 
+        r2="data/raw_samples/raw_fastq/{sample}_2.fastq.gz"
+    output:
+        r1="data/raw_samples/trimmed_fastq/{sample}_1_val_1.fq.gz",
+        r2="data/raw_samples/trimmed_fastq/{sample}_2_val_2.fq.gz"
+    params:
+        #output_dir="data/raw_samples/trimmed_fastq",
+        output_dir=lambda wildcards, output: os.path.dirname(output.r1),
+        sample_name="{sample}"
+    message: "[TRIMMING] paired samples for {params.sample_name}"
+    log:
+        "log/trim/{sample}.log"
+    shell:
+        """"
+        (trim_galore --paired --phred33 --cores 4 --stringency 3 --illumina {input.r1} {input.r2} --output_dir {params.output_dir}) 2> {log}
+        """
+
+# === align to the genome ===
+rule bwa_align_single:
+    input:
+        #r0="data/raw_samples/trimmed_fastq/{sample}_trimmed.fq.gz"
+        r0=rules.trim_fastq_single.output.rOut
+    output:
+        bam_file="data/raw_samples/aligned_fastq/{sample}.bam",
+        bai_file="data/raw_samples/aligned_fastq/{sample}.bai"
+    params:
+        sample_name="{sample}",
+        sample_sam="data/raw_samples/bam_files/{sample}.sam",
+        bwa_index_file=bwa_index_file,
+        temporary_dir=TMP_DIR
+    message: "[ALIGNING] single sample for {params.sample_name}"
+    log:
+        "log/bwa_align/{sample}.log"
+    shell:
+        """
+        (bwa mem -M -t 8 {params.bwa_index_file} {input.r0} > {params.sample_sam}) 2> {log}
+        (picard SortSam -I {params.sample_sam} -O {output.bam_file} --TMP_DIR {params.temporary_dir} -SO coordinate --CREATE_INDEX true) 2> {log}
+        rm {params.sample_sam}
+        """
+
+rule bwa_align_paired:
+    input:
+        r1=rules.trim_fastq_paired.output.r1,
+        r2=rules.trim_fastq_paired.output.r2
+    output:
+        bam_file="data/raw_samples/aligned_fastq/{sample}.bam",
+        bai_file="data/raw_samples/aligned_fastq/{sample}.bai"
+    params:
+        sample_name="{sample}",
+        sample_sam="data/raw_samples/bam_files/{sample}.sam",
+        bwa_index_file=bwa_index_file,
+        temporary_dir=TMP_DIR
+    message: "[ALIGNING] paired samples for {params.sample_name}"
+    log:
+        "log/bwa_align/{sample}.log"
+    shell:
+        """
+        (bwa mem -M -t 8 {params.bwa_index_file} {input.r2} {input.r2} > {params.sample_sam}) 2> {log}
+        (picard SortSam -I {params.sample_sam} -O {output.bam_file} --TMP_DIR {params.temporary_dir} -SO coordinate --CREATE_INDEX true) 2> {log}
+        rm {params.sample_sam}
+        """
+
+# == Merge the bam files ===
+rule merge_and_recalibrate_bam_files:
+    input:
+        lambda wildcards: expand("data/raw_samples/aligned_fastq/{individual}.bam", individual=grouping_dict[wildcards.individual])
+    output:
+        merged_bam_file_norg="data/raw_samples/merged_bam/{individual}_norg.bam",
+        merged_bam_file="data/raw_samples/merged_bam/{individual}.bam",
+        deduplicated_bam_file="data/raw_samples/deduplicated_bam/{individual}.bam",
+        metrics_file="data/raw_samples/deduplicated_bam/{individual}_dedup_metrics.txt",
+        recalibration_table="data/raw_samples/deduplicated_bam/{individual}_recal_data.table",
+        recalibrated_bam_file="data/raw_samples/recalibrated_bam/{individual}.bam"
+    params:
+        input_samples=lambda wildcards, input: ' -I '.join(input),
+        rg_info=lambda wildcards: read_groups[wildcards.individual],
+        temporary_dir=TMP_DIR,
+        genome_file=genome_file,
+        known_variants_files=known_variants_files
+    message:
+        "[MERGING & RECALIBRATING] {wildcards.individual}"
+    log:
+        merge="log/merge_and_recalibrate/{individual}_merge.log",
+        replace_rgs="log/merge_and_recalibrate/{individual}_replace_rg.log",
+        mark_dups="log/merge_and_recalibrate/{individual}_mark_dups.log",
+        base_recab="log/merge_and_recalibrate/{individual}_base_recalibrate.log",
+        apply_recab="log/merge_and_recalibrate/{individual}_apply_recab.log"
+    shell:
+        """
+        (picard MergeSamFiles -I {params.input_samples} -O {output.merged_bam_file_norg} --TMP_DIR {params.temporary_dir} --CREATE_INDEX false) 2> {log.merge}
+
+        (picard AddOrReplaceReadGroups -I {output.merged_bam_file_norg} --RGID {params.rg_info[3]} --RGLB {params.rg_info[2]} --RGSM {params.rg_info[1]} --RGPL {params.rg_info[0]} --RGPU {params.rg_info[4]} -O {output.merged_bam_file} --TMP_DIR {params.temporary_dir} --CREATE_INDEX true) 2> {log.replace_rgs}
+
+        (gatk MarkDuplicates -I {output.merged_bam_file} -O {output.deduplicated_bam_file} -M {output.metrics_file} --CREATE_INDEX true --TMP_DIR {params.temporary_dir}) 2> {log.mark_dups}
+
+        (gatk BaseRecalibrator -I {output.deduplicated_bam_file} -R {params.genome_file} -O {output.recalibration_table} --tmp-dir {params.temporary_dir} {params.known_variants_files}) 2> {log.base_recab}
+
+        (gatk ApplyBQSR -R {params.genome_file} -I {output.deduplicated_bam_file} -bqsr {output.recalibration_table} -O {output.recalibrated_bam_file} --tmp-dir {params.temporary_dir} && samtools index {output.recalibrated_bam_file}) 2> {log.apply_recab}
+
+        rm {output.merged_bam_file_norg}
+        """
+
+# === CALL HAPLOTYPES ===
+rule call_haplotypes:
+    input:
+        recalibrated_bam_file="data/raw_samples/recalibrated_bam/{individual}.bam"
+    output:
+        gvcf_file="data/gvcf_files/{individual}.g.vcf.gz",
+        reblocked_gvcf_file="data/gvcf_files/{individual}.reblocked.g.vcf.gz"
+    message:
+        "[CALLING HAPLOTYPES] {wildcards.individual}"
+    log:
+        call_haps="log/call_haplotypes/{individual}_call_haps.log",
+        reblock="log/call_haplotypes/{individual}_reblock.log"
+    params:
+        genome_file=genome_file
+    shell:
+        """
+        (gatk HaplotypeCaller -R {params.genome_file} -I {input.recalibrated_bam_file} -O {output.gvcf_file} -ERC GVCF) 2> {log.call_haps}
+        (gatk ReblockGVCF -R {params.genome_file} -V {output.gvcf_file} -O {output.reblocked_gvcf_file}) 2> {log.reblock}
+        rm {output.gvcf_file}
+        """
+
+#=== CREATE DATABASE ===
+rule create_variants_DB:
+    input:
+        reblocked_gvcfs=expand("data/gvcf_files/{individual}.reblocked.g.vcf.gz", individual=individuals)
+    output:
+        chr_db="{scratch_dir}/{chr}_db"
+        #variant_chr_db="data/variants_DB/{chr}_db"
+    params:
+        input_samples=lambda wildcards, input:' -V '.join(input.reblocked_gvcfs),
+        #chr="{chr}",
+        #scratch_space=lambda wildcards, output: os.path.dirname(output.variant_chr_db),
+        temporary_dir=TMP_DIR
+    message:
+        "[CREATING VARIANTS DB] {wildcards}"
+    # log:
+    #     "data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz"
+        #lambda wildcards, output: f"log/create_db/{os.path.basename(output.chr_db)}"
+    shell:
+        """
+        (gatk GenomicsDBImport -V {params.input_samples} --genomicsdb-workspace-path {wildcards.scratch_dir}/{wildcards.chr}_db --intervals {wildcards.chr} --tmp-dir {params.temporary_dir} && cp -r {wildcards.scratch_dir}/{wildcards.chr}_db data/variants_DB/{wildcards.chr}_db) 2> {log}
+        """
+
+
+# # === joint calling === "data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz
+# rule genotype_gvcfs:
+#     input:
+#         variant_chr_db="data/variants_DB/{chr}_db"
+#         #variant_chr_db=rules.create_variants_DB.output.variant_chr_db
+#     output:
+#         unphased_chr_vcf="data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz"
+#     params:
+#         genome_file=genome_file
+#         #variant_chr_db="data/variants_DB/{chr}_db"
+#     # log:
+#     #     "log/genotyping/{chr}.log"
+#     message:
+#         "Genotyping {wildcards}"
+#     shell:
+#         """
+#         (gatk GenotypeGVCFs -R {params.genome_file} -V gendb://{input.variant_chr_db} -O {output.unphased_chr_vcf}) 2> {log}
+#         """     
+
+# === phase vcfs ===
+# rule phase_vcfs:
+#     input:
+#         #unphased_chr_vcf="data/final_vcfs/unphased_chromosomes/{project_name}_{chr}_unphased_genotypes.vcf.gz"
+#         unphased_chr_vcf=rules.genotype_gvcfs.output.unphased_chr_vcf
+#     output:
+#         phased_chr_vcf="data/final_vcfs/phased_chromosomes/{project_name}_{chr}_phased_genotypes.vcf.gz"
+#     threads: 4
+#     shell:
+#         """
+#         shapeit4 --input {input.unphased_chr_vcf} --map {gmap_dir}/{wildcards.chr}.b38.gmap.gz --region {wildcards.chr} --output {output.phased_chr_vcf} --thread 4 && tabix -p vcf {output.phased_chr_vcf}
+#         """
+
+# # === gather the phased vcfs ===
+# rule gather_vcfs:
+#     input:
+#         all_phased_chr_vcf=expand("data/final_vcfs/phased_chromosomes/{project_name}_{chr}_phased_genotypes.vcf.gz", chr=chromosomes, project_name=project_name)
+#     output:
+#         final_vcf_file="data/final_vcfs/phased/{project_name}_merged_phased_genotypes.vcf.gz"
+#     params:
+#         chr="{wildcards.chr}"
+#     message:
+#         "[GATHERING VCFs] for project: {project_name}"
+#     shell:
+#         """
+#         bcftools concat {input.all_phased_chr_vcf} -o {output.final_vcf_file} -O z && tabix -p vcf {output.final_vcf_file}
+#        """
+
