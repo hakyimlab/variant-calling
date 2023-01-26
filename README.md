@@ -11,11 +11,7 @@
 This repo contains a pipeline to call variants from fastq files in a special case. This special case is when there are multiple fastq file that may need to be merged. E.g. there are multiple fastq files for an individual.
 
 ## Usage
-
-
-
-
-
+`snakemake -s snakemake.smk`
 
 ## To-do
 - [ ] Remove the merging criterion; pipeline should work fine without a merging step
