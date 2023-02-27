@@ -2,14 +2,14 @@
 
 rule merge_and_recalibrate_bam_files:
     input:
-        lambda wildcards: expand("data/raw_samples/aligned_fastq/{ind_srrs}.bam", ind_srrs=grouping_dict[wildcards.individual])
+        lambda wildcards: expand(os.path.join(DATA_DIR, "aligned_fastq/{ind_srrs}.bam"), ind_srrs=grouping_dict[wildcards.individual])
     output:
-        merged_bam_file_norg="data/raw_samples/merged_bam/{individual}_norg.bam",
-        merged_bam_file="data/raw_samples/merged_bam/{individual}.bam",
-        deduplicated_bam_file="data/raw_samples/deduplicated_bam/{individual}.bam",
-        metrics_file="data/raw_samples/deduplicated_bam/{individual}_dedup_metrics.txt",
-        recalibration_table="data/raw_samples/deduplicated_bam/{individual}_recal_data.table",
-        recalibrated_bam_file="data/raw_samples/recalibrated_bam/{individual}.bam"
+        merged_bam_file_norg=os.path.join(DATA_DIR, "merged_bam/{individual}_norg.bam"),
+        merged_bam_file=os.path.join(DATA_DIR, "merged_bam/{individual}.bam"),
+        deduplicated_bam_file=os.path.join(DATA_DIR, "deduplicated_bam/{individual}.bam"),
+        metrics_file=os.path.join(DATA_DIR, "deduplicated_bam/{individual}_dedup_metrics.txt"),
+        recalibration_table=os.path.join(DATA_DIR, "deduplicated_bam/{individual}_recal_data.table"),
+        recalibrated_bam_file=os.path.join(DATA_DIR, "recalibrated_bam/{individual}.bam")
     params:
         input_samples=lambda wildcards, input: ' -I '.join(input),
         rg_info=lambda wildcards: read_groups[wildcards.individual],
@@ -17,13 +17,14 @@ rule merge_and_recalibrate_bam_files:
         genome_file=genome_file,
         known_variants_files=known_variants_files
     message:
-        "[MERGING & RECALIBRATING] {wildcards.individual}"
+        "MERGING & RECALIBRATING - {wildcards.individual}"
+    conda: CONDA_YAML_FILE
     log:
-        merge="log/merge_and_recalibrate/{individual}_merge.log",
-        replace_rgs="log/merge_and_recalibrate/{individual}_replace_rg.log",
-        mark_dups="log/merge_and_recalibrate/{individual}_mark_dups.log",
-        base_recab="log/merge_and_recalibrate/{individual}_base_recalibrate.log",
-        apply_recab="log/merge_and_recalibrate/{individual}_apply_recab.log"
+        merge=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_merge.log"),
+        replace_rgs=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_replace_rg.log"),
+        mark_dups=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_mark_dups.log"),
+        base_recab=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_base_recalibrate.log"),
+        apply_recab=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_apply_recab.log")
     shell:
         """
         (picard MergeSamFiles -I {params.input_samples} -O {output.merged_bam_file_norg} --TMP_DIR {params.temporary_dir} --CREATE_INDEX false) 2> {log.merge}
