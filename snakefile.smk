@@ -1,5 +1,5 @@
 
-include: "rules/common.smk"
+include: "workflow/rules/common.smk"
 
 # === one rule to rule them all ===
 rule all:
@@ -15,12 +15,14 @@ rule all:
         expand(os.path.join("data/final_vcfs/phased_chromosomes/", f"{project_name}_{{chrom}}_unphased_genotypes.vcf.gz"), chrom=chromosomes),
         expand("data/final_vcfs/phased/{project_name}_merged_phased_genotypes.vcf.gz", project_name=project_name)
 
-
 # === trim the fastq files ===
-include: "rules/trim_fastq.smk"
+include: "workflow/rules/trim_fastq.smk"
 # === align to the genome ===
-include: "rules/bwa_align.smk"
+include: "workflow/rules/bwa_align.smk"
 # == Merge the bam files ===
-include: "rules/merge_bam.smk"
+include: "workflow/rules/merge_bam.smk"
 # === CALL HAPLOTYPES ===
-include: "rules/call_variants.smk"
+include: "workflow/rules/call_variants.smk"
+
+
+# snakemake --cluster qsub -j 32

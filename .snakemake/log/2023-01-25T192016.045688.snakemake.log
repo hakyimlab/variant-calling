@@ -1,0 +1,6 @@
+KeyError in file /project2/haky/temi/projects/variant-calling/workflow/rules/common.smk, line 70:
+'SRR13105357'
+  File "/project2/haky/temi/projects/variant-calling/snakefile.smk", line 2, in <module>
+  File "/project2/haky/temi/projects/variant-calling/workflow/rules/common.smk", line 105, in <module>
+  File "/project2/haky/temi/projects/variant-calling/workflow/rules/common.smk", line 105, in <dictcomp>
+  File "/project2/haky/temi/projects/variant-calling/workflow/rules/common.smk", line 70, in create_trim_inputs
