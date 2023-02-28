@@ -1,5 +1,8 @@
 
 
+# check if merge is true
+print(f"Merge?: {config['merge']}")
+
 rule merge_and_recalibrate_bam_files:
     input:
         lambda wildcards: expand(os.path.join(DATA_DIR, "aligned_fastq/{ind_srrs}.bam"), ind_srrs=grouping_dict[wildcards.individual])
@@ -27,9 +30,16 @@ rule merge_and_recalibrate_bam_files:
         apply_recab=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_apply_recab.log")
     shell:
         """
-        (picard MergeSamFiles -I {params.input_samples} -O {output.merged_bam_file_norg} --TMP_DIR {params.temporary_dir} --CREATE_INDEX false) 2> {log.merge}
+        should_merge=$({{config['merge']}})
+        if [ $should_merge == 'true' ]; then
+            (picard MergeSamFiles -I {params.input_samples} -O {output.merged_bam_file_norg} --TMP_DIR {params.temporary_dir} --CREATE_INDEX false) 2> {log.merge}
 
-        (picard AddOrReplaceReadGroups -I {output.merged_bam_file_norg} --RGID {params.rg_info[3]} --RGLB {params.rg_info[2]} --RGSM {params.rg_info[1]} --RGPL {params.rg_info[0]} --RGPU {params.rg_info[4]} -O {output.merged_bam_file} --TMP_DIR {params.temporary_dir} --CREATE_INDEX true) 2> {log.replace_rgs}
+            (picard AddOrReplaceReadGroups -I {output.merged_bam_file_norg} --RGID {params.rg_info[3]} --RGLB {params.rg_info[2]} --RGSM {params.rg_info[1]} --RGPL {params.rg_info[0]} --RGPU {params.rg_info[4]} -O {output.merged_bam_file} --TMP_DIR {params.temporary_dir} --CREATE_INDEX true) 2> {log.replace_rgs}
+
+        elif [ $should_merge == 'false' ]; then
+            (ln -s {params.input_samples} {output.merged_bam_file_norg}) 2> {log.merge}
+            (ln -s {output.merged_bam_file_norg}) {output.merged_bam_file}) 2> {log.replace_rgs}
+        fi
 
         (gatk MarkDuplicates -I {output.merged_bam_file} -O {output.deduplicated_bam_file} -M {output.metrics_file} --CREATE_INDEX true --TMP_DIR {params.temporary_dir}) 2> {log.mark_dups}
 

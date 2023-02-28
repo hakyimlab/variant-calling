@@ -54,6 +54,11 @@ if not os.path.isdir(LOG_DIR):
 if not os.path.isdir(TMP_DIR):
     os.makedirs(TMP_DIR)
 
+if config['merge'] == True:
+    config['merge'] = 'true'
+elif config['merge'] == False:
+    config['merge'] = 'false'
+
 # output directories and all that
 
 # rule order
