@@ -7,7 +7,7 @@
 
 ## Introduction 
 
-This repo contains a pipeline to call variants from fastq files in a special case. This special case is when there are multiple fastq file that may need to be merged. E.g. there are multiple fastq files for an individual.
+This repo contains a pipeline to call variants from fastq files. Another use case is when there are multiple fastq files that may need to be merged. E.g. there are multiple fastq files for an individual.
 
 ## Usage
 1. Edit the `config/config.json`; instructions are [here](##-Config-file-details)
@@ -25,9 +25,12 @@ This repo contains a pipeline to call variants from fastq files in a special cas
 - `project_name`: A name for the project. If final, phased vcf files are to be merged into one, the final vcf file will be names `{project_name}_final.vcf.gz`
 - `merge_file`: A tab-delimited file that contains how you want to group the reads and merge them, if merging is necessary.
 - `sra_folder`:
-- `conda_env`:
-- `variants_resource`: 
-- `genetic_map`:
+- `merge`: should bam files be merged based on the metadata.txt file?
+- `conda_env`: An environment yaml file - shipped with the pipeline and should be found in [`workflow/envs/environment.yaml`](workflow/envs/environment.yaml)
+- `variants_resource`: A nested json directive for various vcf files of known variants
+  - `folder`: the path to the folder
+  - `files`: list of known variants
+- `genetic_map`: A nested json directive for 
 - `bwa_resource`:
 - `genome_resource`: 
 - `reblock_gvcf`:
