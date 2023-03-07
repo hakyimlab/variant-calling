@@ -2,7 +2,6 @@
 #### Date: Mon Jan 23 2023
 #### Author: Temi
 
-
 > :warning: **This pipeline is not for use yet.**
 
 ## Introduction 
@@ -15,7 +14,8 @@ This repo contains a pipeline to call variants from fastq files. Another use cas
 3. Ensure that `metatdata/merge_info.txt` exists
 4. Run `snakemake -s snakemake.smk`
 
-## Dry run
+## Dry run 
+#### - use this to check that the pipeline can, at least, dry-run
 `snakemake -s snakemake.smk -np`
 
 ## lint run
@@ -35,10 +35,13 @@ This repo contains a pipeline to call variants from fastq files. Another use cas
 - `variants_resource`: A nested json directive for various vcf files of known variants
   - `folder`: the path to the folder
   - `files`: list of known variants
-- `genetic_map`: A nested json directive for 
-- `bwa_resource`:
+- `genetic_map`: A nested json directive for genetic maps for phasing. Should point to the folder only - not files
+  - `folder`: the path to the folder containing the files
+- `bwa_resource`: nested json directive for resources used for alignment
+  - `folder`: the path to the folder
+  - `files`: a human genome file
 - `genome_resource`: 
-- `reblock_gvcf`:
+- `reblock_gvcf`: true (will be removed later, since I intend for this pipeline to reblock anyway)
 - `scratch_folder`:
 - `variants_db`:
 - `phase_vcfs`: Should unphased vcf files be phased?
@@ -46,5 +49,5 @@ This repo contains a pipeline to call variants from fastq files. Another use cas
 
 
 ## To-do
-- [ ] Remove the merging criterion; pipeline should work fine without a merging step
+- [X] Remove the merging criterion; pipeline should work fine without a merging step
 - [X] Include software environment - conda or containers? Decisions, decisions

@@ -1,7 +1,7 @@
 
 
 # check if merge is true
-print(f"Merge?: {config['merge']}")
+#print(f"Merge?: {config['merge']}")
 
 rule merge_and_recalibrate_bam_files:
     input:
@@ -18,7 +18,8 @@ rule merge_and_recalibrate_bam_files:
         rg_info=lambda wildcards: read_groups[wildcards.individual],
         temporary_dir=TMP_DIR,
         genome_file=genome_file,
-        known_variants_files=known_variants_files
+        known_variants_files=known_variants_files,
+        should_merge=config['merge']
     message:
         "MERGING & RECALIBRATING - {wildcards.individual}"
     conda: CONDA_YAML_FILE
@@ -30,13 +31,12 @@ rule merge_and_recalibrate_bam_files:
         apply_recab=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_apply_recab.log")
     shell:
         """
-        should_merge=$({{config['merge']}})
-        if [ $should_merge == 'true' ]; then
+        if [ '{params.should_merge}' == 'true' ]; then
             (picard MergeSamFiles -I {params.input_samples} -O {output.merged_bam_file_norg} --TMP_DIR {params.temporary_dir} --CREATE_INDEX false) 2> {log.merge}
 
             (picard AddOrReplaceReadGroups -I {output.merged_bam_file_norg} --RGID {params.rg_info[3]} --RGLB {params.rg_info[2]} --RGSM {params.rg_info[1]} --RGPL {params.rg_info[0]} --RGPU {params.rg_info[4]} -O {output.merged_bam_file} --TMP_DIR {params.temporary_dir} --CREATE_INDEX true) 2> {log.replace_rgs}
 
-        elif [ $should_merge == 'false' ]; then
+        elif [ '{params.should_merge}' == 'false' ]; then
             (ln -s {params.input_samples} {output.merged_bam_file_norg}) 2> {log.merge}
             (ln -s {output.merged_bam_file_norg}) {output.merged_bam_file}) 2> {log.replace_rgs}
         fi

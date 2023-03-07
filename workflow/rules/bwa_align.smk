@@ -14,6 +14,7 @@ rule bwa_align_single:
         temporary_dir=TMP_DIR
     message: "ALIGNING - single sample for {params.sample_name}"
     conda: CONDA_YAML_FILE
+    threads: 8
     log:
         os.path.join(LOG_DIR, "bwa_align/{file_basename}.log")
     shell:
@@ -37,6 +38,7 @@ rule bwa_align_paired:
         temporary_dir=TMP_DIR
     message: "ALIGNING - paired samples for {params.sample_name}"
     conda: CONDA_YAML_FILE
+    threads: 8
     log: 
         os.path.join(LOG_DIR, "bwa_align/{file_basename}.log")
     shell:

@@ -91,4 +91,3 @@ def create_sra_num_list(gather_dict, which):
         for i,s in enumerate(gather_dict[which]): 
             output.append(f'{which}_{i+1}_val_{i+1}.fq.gz')
         return(output)
-
