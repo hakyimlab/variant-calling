@@ -22,7 +22,7 @@ rule merge_and_recalibrate_bam_files:
         should_merge=config['merge']
     message:
         "MERGING & RECALIBRATING - {wildcards.individual}"
-    conda: CONDA_YAML_FILE
+    threads: 8
     log:
         merge=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_merge.log"),
         replace_rgs=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_replace_rg.log"),

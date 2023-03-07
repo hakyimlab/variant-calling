@@ -10,7 +10,7 @@ rule trim_fastq_single:
         output_dir=lambda wildcards, output: os.path.dirname(output.rOut),
         sample_name="{file_basename}"
     message: "TRIMMING - single sample for {params.sample_name}"
-    conda: CONDA_YAML_FILE
+    threads: 8
     log:
         os.path.join(LOG_DIR, "trim/{file_basename}.log")
     shell:
@@ -30,7 +30,7 @@ rule trim_fastq_paired:
         output_dir=lambda wildcards, output: os.path.dirname(output.r1),
         sample_name="{file_basename}"
     message: "TRIMMING - paired samples for {params.sample_name}"
-    conda: CONDA_YAML_FILE
+    threads: 8
     log:
         os.path.join(LOG_DIR, "trim/{file_basename}.log")
     shell:

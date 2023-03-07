@@ -1,14 +1,14 @@
 {
-    "project_name":"call_genotypes_2023",
-    "metadata":"metadata/metadata_sheet_no_merge.txt",
-    "sra_folder": "data/fake_samples/raw_fastq",
+    "project_name":"test_genotypes_2023",
+    "metadata":"metadata/test_merge.txt",
+    "sra_folder": "/project2/haky/temi/projects/freedman_individuals/prj5/raw_fastq",
     "conda_env": "workflow/envs/environment.yaml",
-    "variants_resource": {"folder": "resource", "files":["1000G_omni2.5.hg38_chrRenamed.vcf.gz", "dbsnp_138.hg38_chrRenamed.vcf.gz", "1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz", "dbsnp_144.hg38_chrRenamed.vcf.gz", "hapmap_3.3.hg38_chrRenamed.vcf.gz", "Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz", "dbsnp_146.hg38_chrRenamed.vcf.gz", "Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz", "hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz"]
+    "variants_resource": {"folder": "resource/variants_files", "files":["1000G_omni2.5.hg38_chrRenamed.vcf.gz", "dbsnp_138.hg38_chrRenamed.vcf.gz", "1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz", "dbsnp_144.hg38_chrRenamed.vcf.gz", "hapmap_3.3.hg38_chrRenamed.vcf.gz", "Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz", "dbsnp_146.hg38_chrRenamed.vcf.gz", "Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz", "hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz"]
     }, "genetic_map":{"folder":"resource/genetic_maps-b38"},
-    "genome_resource": {"folder": "resource", "files":["Homo_sapiens_assembly38.fasta"]},
+    "genome_resource": {"folder": "resource/genome_files", "files":["Homo_sapiens_assembly38.fasta"]},
     "reblock_gvcf":"true", 
     "merge": true,
     "phase_vcfs":"true", 
-    "bwa_resource":{"folder": "resource/referenceFiles/Homo_sapiens/GATK/GRCh38/Sequence/BWAIndex", "files":["Homo_sapiens_assembly38.fasta.64"]},
-    "scratch_folder": "scratch", "variants_db": "variants_DB", "chromosomes":"metadata/chromosomes.txt"
+    "bwa_resource":{"folder": "resource/BWAIndex", "files":["Homo_sapiens_assembly38.fasta.64"]},
+    "scratch_folder": "scratch/midway3/temi", "variants_db": "variants_DB", "chromosomes":"metadata/chromosomes.txt"
 }

@@ -10,7 +10,7 @@ rule call_haplotypes:
     log:
         call_haps=os.path.join(LOG_DIR, "call_haplotypes/{individual}_call_haps.log"),
         reblock=os.path.join(LOG_DIR, "call_haplotypes/{individual}_reblock.log")
-    conda: CONDA_YAML_FILE
+    threads: 8
     params:
         genome_file=genome_file
     shell:
@@ -33,7 +33,7 @@ rule create_variants_DB:
         temporary_dir=TMP_DIR
     message:
         "CREATING VARIANTS DB - {wildcards}"
-    conda: CONDA_YAML_FILE
+    threads: 8
     log:
         os.path.join(LOG_DIR, 'create_db/{chrom}.log')
     shell:
@@ -56,7 +56,7 @@ rule genotype_gvcfs:
         os.path.join(LOG_DIR, 'genotype_gvcfs/{chrom}_unphased.log')
     message:
         "GENOTYPING - {wildcards.chrom}"
-    conda: CONDA_YAML_FILE
+    threads: 8
     shell:
         """
         (gatk GenotypeGVCFs -R {params.genome_file} -V gendb://{input.variant_chrom_db} -O {output.unphased_chrom_vcf}) 2> {log}
@@ -93,7 +93,7 @@ rule gather_vcfs:
         chrom="{wildcards.chrom}"
     message:
         "GATHERING VCFs - {project_name}"
-    conda: CONDA_YAML_FILE
+    threads: 8
     log:
         os.path.join(LOG_DIR, 'gather_vcfs/{project_name}.log')
     shell:
