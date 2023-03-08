@@ -12,7 +12,7 @@ This repo contains a pipeline to call variants from fastq files. Another use cas
 1. Edit the `config/config.json`; instructions are [here](##-Config-file-details)
 2. Make sure that `metadata/chromosomes.txt` exists
 3. Ensure that `metatdata/merge_info.txt` exists
-4. Run `snakemake -s snakemake.smk`
+4. Run `snakemake -s snakemake.smk --profile profile/simple`
 
 ## Dry run 
 #### - use this to check that the pipeline can, at least, dry-run
