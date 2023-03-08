@@ -14,8 +14,8 @@ rule trim_fastq_single:
     log:
         os.path.join(LOG_DIR, "trim/{file_basename}.log")
     shell:
-        """"
-        (trim_galore --single --phred33 --cores 4 --stringency 3 --illumina {input.rIn} --output_dir {params.output_dir}) 2> {log}
+        """
+        (trim_galore --phred33 --cores 4 --stringency 3 --illumina {input.rIn} --output_dir {params.output_dir}) 2> {log}
         """
 
 rule trim_fastq_paired:
@@ -34,6 +34,6 @@ rule trim_fastq_paired:
     log:
         os.path.join(LOG_DIR, "trim/{file_basename}.log")
     shell:
-        """"
+        """
         (trim_galore --paired --phred33 --cores 4 --stringency 3 --illumina {input.r1} {input.r2} --output_dir {params.output_dir}) 2> {log}
         """

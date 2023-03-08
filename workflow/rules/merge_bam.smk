@@ -1,51 +1,113 @@
-
-
-# check if merge is true
-#print(f"Merge?: {config['merge']}")
-
-rule merge_and_recalibrate_bam_files:
+rule merge_bam_files:
     input:
-        lambda wildcards: expand(os.path.join(DATA_DIR, "aligned_fastq/{ind_srrs}.bam"), ind_srrs=grouping_dict[wildcards.individual])
+        lambda wildcards: expand(os.path.join(DATA_DIR, "sorted_bam/{ind_srrs}.bam"), ind_srrs=grouping_dict[wildcards.file_basename])
     output:
-        merged_bam_file_norg=os.path.join(DATA_DIR, "merged_bam/{individual}_norg.bam"),
-        merged_bam_file=os.path.join(DATA_DIR, "merged_bam/{individual}.bam"),
-        deduplicated_bam_file=os.path.join(DATA_DIR, "deduplicated_bam/{individual}.bam"),
-        metrics_file=os.path.join(DATA_DIR, "deduplicated_bam/{individual}_dedup_metrics.txt"),
-        recalibration_table=os.path.join(DATA_DIR, "deduplicated_bam/{individual}_recal_data.table"),
-        recalibrated_bam_file=os.path.join(DATA_DIR, "recalibrated_bam/{individual}.bam")
+        merged_bam_file_norg=os.path.join(DATA_DIR, "merged_bam/{file_basename}_norg.bam")
     params:
-        input_samples=lambda wildcards, input: ' -I '.join(input),
-        rg_info=lambda wildcards: read_groups[wildcards.individual],
+        input_samples=lambda wildcards, input: ' I='.join(input),
         temporary_dir=TMP_DIR,
-        genome_file=genome_file,
-        known_variants_files=known_variants_files,
         should_merge=config['merge']
     message:
-        "MERGING & RECALIBRATING - {wildcards.individual}"
+        "MERGING BAM FILES - {wildcards.file_basename}"
     threads: 8
     log:
-        merge=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_merge.log"),
-        replace_rgs=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_replace_rg.log"),
-        mark_dups=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_mark_dups.log"),
-        base_recab=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_base_recalibrate.log"),
-        apply_recab=os.path.join(LOG_DIR, "merge_and_recalibrate/{individual}_apply_recab.log")
+        merge_out=os.path.join(LOG_DIR, "merge_step/{file_basename}_merge.log"),
+        merge_err=os.path.join(LOG_DIR, "merge_step/{file_basename}_merge.err")
     shell:
         """
-        if [ '{params.should_merge}' == 'true' ]; then
-            (picard MergeSamFiles -I {params.input_samples} -O {output.merged_bam_file_norg} --TMP_DIR {params.temporary_dir} --CREATE_INDEX false) 2> {log.merge}
-
-            (picard AddOrReplaceReadGroups -I {output.merged_bam_file_norg} --RGID {params.rg_info[3]} --RGLB {params.rg_info[2]} --RGSM {params.rg_info[1]} --RGPL {params.rg_info[0]} --RGPU {params.rg_info[4]} -O {output.merged_bam_file} --TMP_DIR {params.temporary_dir} --CREATE_INDEX true) 2> {log.replace_rgs}
-
-        elif [ '{params.should_merge}' == 'false' ]; then
-            (ln -s {params.input_samples} {output.merged_bam_file_norg}) 2> {log.merge}
-            (ln -s {output.merged_bam_file_norg}) {output.merged_bam_file}) 2> {log.replace_rgs}
-        fi
-
-        (gatk MarkDuplicates -I {output.merged_bam_file} -O {output.deduplicated_bam_file} -M {output.metrics_file} --CREATE_INDEX true --TMP_DIR {params.temporary_dir}) 2> {log.mark_dups}
-
-        (gatk BaseRecalibrator -I {output.deduplicated_bam_file} -R {params.genome_file} -O {output.recalibration_table} --tmp-dir {params.temporary_dir} {params.known_variants_files}) 2> {log.base_recab}
-
-        (gatk ApplyBQSR -R {params.genome_file} -I {output.deduplicated_bam_file} -bqsr {output.recalibration_table} -O {output.recalibrated_bam_file} --tmp-dir {params.temporary_dir} && samtools index {output.recalibrated_bam_file}) 2> {log.apply_recab}
-
-        rm {output.merged_bam_file_norg}
+        (picard MergeSamFiles I={params.input_samples} O={output.merged_bam_file_norg} TMP_DIR={params.temporary_dir} CREATE_INDEX=false) 2> {log.merge_err} 1> {log.merge_out}
         """
+
+rule add_read_groups:
+    input:
+        f0=rules.merge_bam_files.output.merged_bam_file_norg
+    output:
+        merged_bam_file=os.path.join(DATA_DIR, "merged_bam/{file_basename}.bam"),
+        merged_bai_file=os.path.join(DATA_DIR, "merged_bam/{file_basename}.bai")
+    params:
+        rg_info=lambda wildcards: read_groups[wildcards.file_basename],
+        temporary_dir=TMP_DIR
+    message: "ADDING READ GROUPS - {wildcards.file_basename}"
+    threads: 8
+    log:
+        replace_rgs_out=os.path.join(LOG_DIR, "merge_step/{file_basename}_replace_rg.log"),
+        replace_rgs_err=os.path.join(LOG_DIR, "merge_step/{file_basename}_replace_rg.err")
+    shell:
+        """
+        (picard AddOrReplaceReadGroups I={input.f0} RGID={params.rg_info[3]} RGLB={params.rg_info[2]} RGSM={params.rg_info[1]} RGPL={params.rg_info[0]} RGPU={params.rg_info[4]} O={output.merged_bam_file} TMP_DIR={params.temporary_dir} CREATE_INDEX=true) 2> {log.replace_rgs_err} 1> {log.replace_rgs_out}
+        """
+
+rule mark_duplicates:
+    input:
+        f0=rules.add_read_groups.output.merged_bam_file,
+        f1=rules.add_read_groups.output.merged_bai_file
+    output:
+        deduplicated_bam_file=os.path.join(DATA_DIR, "deduplicated_bam/{file_basename}.bam"),
+        deduplicated_bai_file=os.path.join(DATA_DIR, "deduplicated_bam/{file_basename}.bai"),
+        metrics_file=os.path.join(DATA_DIR, "deduplicated_bam/{file_basename}_dedup_metrics.txt")
+    params:
+        temporary_dir=TMP_DIR
+    message: "MARKING DUPLICATES - {wildcards.file_basename}"
+    threads: 8
+    log:
+        mark_dups_out=os.path.join(LOG_DIR, "merge_step/{file_basename}_mark_dups.log"),
+        mark_dups_err=os.path.join(LOG_DIR, "merge_step/{file_basename}_mark_dups.err")
+    shell:
+        """
+        (picard MarkDuplicates I={input.f0} O={output.deduplicated_bam_file} M={output.metrics_file} CREATE_INDEX=true TMP_DIR={params.temporary_dir}) 2> {log.mark_dups_err} 1> {log.mark_dups_out}
+        """
+
+rule apply_recalibration:
+    input:
+        f0=rules.mark_duplicates.output.deduplicated_bam_file,
+        f1=rules.mark_duplicates.output.deduplicated_bai_file,
+        f3=rules.mark_duplicates.output.metrics_file
+    output:
+        recalibration_table=os.path.join(DATA_DIR, "recalibrated_bam/{file_basename}_recal_data.table"),
+        recalibrated_bam_file=os.path.join(DATA_DIR, "recalibrated_bam/{file_basename}.bam"),
+        recalibrated_bai_file=os.path.join(DATA_DIR, "recalibrated_bam/{file_basename}.bai")
+    params:
+        temporary_dir=TMP_DIR,
+        genome_file=genome_file,
+        known_variants_files=known_variants_files
+    message: "APPLYING RECALIBRATION - {wildcards.file_basename}"
+    threads: 8
+    log:
+        base_recab_err=os.path.join(LOG_DIR, "merge_step/{file_basename}_base_recalibrate.err"),
+        apply_recab_err=os.path.join(LOG_DIR, "merge_step/{file_basename}_apply_recab.err"),
+        base_recab_out=os.path.join(LOG_DIR, "merge_step/{file_basename}_base_recalibrate.log"),
+        apply_recab_out=os.path.join(LOG_DIR, "merge_step/{file_basename}_apply_recab.log")
+    shell:
+        """
+        (gatk BaseRecalibrator -I {input.f0} -R {params.genome_file} -O {output.recalibration_table} --tmp-dir {params.temporary_dir} {params.known_variants_files}) 2> {log.base_recab_err} 1> {log.base_recab_out}
+
+        (gatk ApplyBQSR -R {params.genome_file} -I {input.f0} -bqsr {output.recalibration_table} -O {output.recalibrated_bam_file} --tmp-dir {params.temporary_dir} && samtools index {output.recalibrated_bam_file}) 2> {log.apply_recab_err} 1> {log.apply_recab_out}
+        """
+    
+
+
+
+
+
+        # (picard MarkDuplicates I={output.merged_bam_file} O={output.deduplicated_bam_file} M={output.metrics_file} CREATE_INDEX=true TMP_DIR={params.temporary_dir}) 2> {log.mark_dups_err} 1> {log.mark_dups_out}
+
+        # (gatk BaseRecalibrator -I {output.deduplicated_bam_file} -R {params.genome_file} -O {output.recalibration_table} --tmp-dir {params.temporary_dir} {params.known_variants_files}) 2> {log.base_recab_err} 1> {log.base_recab_out}
+
+        # (gatk ApplyBQSR -R {params.genome_file} -I {output.deduplicated_bam_file} -bqsr {output.recalibration_table} -O {output.recalibrated_bam_file} --tmp-dir {params.temporary_dir} && samtools index {output.recalibrated_bam_file}) 2> {log.apply_recab_err} 1> {log.apply_recab_out}
+
+
+        # if [ '{params.should_merge}' == 'true' ]; then
+        #     (picard MergeSamFiles I={params.input_samples} O={output.merged_bam_file_norg} TMP_DIR={params.temporary_dir} CREATE_INDEX=false) 2> {log.merge}
+
+        #     (picard AddOrReplaceReadGroups I={output.merged_bam_file_norg} RGID={params.rg_info[3]} RGLB={params.rg_info[2]} RGSM={params.rg_info[1]} RGPL={params.rg_info[0]} RGPU={params.rg_info[4]} O={output.merged_bam_file} TMP_DIR={params.temporary_dir} CREATE_INDEX=true) 2> {log.replace_rgs}
+
+        # elif [ '{params.should_merge}' == 'false' ]; then
+        #     (ln -s {params.input_samples} {output.merged_bam_file_norg}) 2> {log.merge}
+        #     (ln -s {output.merged_bam_file_norg}) {output.merged_bam_file}) 2> {log.replace_rgs}
+        # fi
+
+        # (picard MarkDuplicates I={output.merged_bam_file} O={output.deduplicated_bam_file} M={output.metrics_file} CREATE_INDEX=true TMP_DIR={params.temporary_dir}) 2> {log.mark_dups}
+
+        # (gatk BaseRecalibrator -I {output.deduplicated_bam_file} -R {params.genome_file} -O {output.recalibration_table} --tmp-dir {params.temporary_dir} {params.known_variants_files}) 2> {log.base_recab}
+
+        # (gatk ApplyBQSR -R {params.genome_file} -I {output.deduplicated_bam_file} -bqsr {output.recalibration_table} -O {output.recalibrated_bam_file} --tmp-dir {params.temporary_dir} && samtools index {output.recalibrated_bam_file}) 2> {log.apply_recab}

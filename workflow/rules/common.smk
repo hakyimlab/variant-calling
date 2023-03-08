@@ -43,10 +43,11 @@ GVCF_DIR = "data/gvcf_files"
 FINAL_VCFS_DIR =  "data/final_vcfs"
 LOG_DIR = 'logs'
 TMP_DIR = 'tmp'
-BWA_INDEX = 'resource/alignment/index' # what is this?????????????
+#BWA_INDEX = 'resource/alignment/index' # what is this?????????????
 known_variants_files = [f"--known-sites {os.path.join(config['variants_resource']['folder'], v)}" for v in config['variants_resource']['files']]
 genome_file = [f"{os.path.join(config['genome_resource']['folder'], v)}" for v in config['genome_resource']['files']]
-bwa_index_file = f"{config['bwa_resource']['folder']}"
+#bwa_index_file = f"{config['bwa_resource']['folder']['files']}"
+bwa_index_file = os.path.join(config['bwa_resource']['folder'], config['bwa_resource']['files'][0])
 scratch_folder = config['scratch_folder']
 variants_db = config["variants_db"]
 chromosomes = pd.read_csv(config["chromosomes"], header=None).iloc[:, 0].tolist()

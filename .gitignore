@@ -1,0 +1,8 @@
+#exclude
+data/*
+tmp/*
+.snakemake/*
+logs/*
+
+# include
+!data/fake_samples
