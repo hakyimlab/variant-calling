@@ -3,6 +3,8 @@ data/*
 tmp/*
 .snakemake/*
 logs/*
+scratch/*
+resource/*
 
 # include
 !data/fake_samples

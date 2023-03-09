@@ -40,12 +40,14 @@ if not os.path.isfile(CONDA_YAML_FILE):
     raise Exception("ERROR - conda yaml file cannot be found in `workflow/envs`")
 DATA_DIR = "data/raw_samples"
 GVCF_DIR = "data/gvcf_files"
+REBLOCKED_GVCF_DIR = "data/reblocked_gvcf_files"
 FINAL_VCFS_DIR =  "data/final_vcfs"
 LOG_DIR = 'logs'
 TMP_DIR = 'tmp'
 #BWA_INDEX = 'resource/alignment/index' # what is this?????????????
 known_variants_files = [f"--known-sites {os.path.join(config['variants_resource']['folder'], v)}" for v in config['variants_resource']['files']]
-genome_file = [f"{os.path.join(config['genome_resource']['folder'], v)}" for v in config['genome_resource']['files']]
+genome_file = os.path.join(config['genome_resource']['folder'], config['genome_resource']['files'])
+print(f'GENOME FILE - {genome_file}')
 #bwa_index_file = f"{config['bwa_resource']['folder']['files']}"
 bwa_index_file = os.path.join(config['bwa_resource']['folder'], config['bwa_resource']['files'][0])
 scratch_folder = config['scratch_folder']

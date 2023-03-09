@@ -6,9 +6,9 @@ cluster:
     --mem={resources.mem_mb}
     --time={resources.time}
     --account={resources.account}
-    --job-name=smk-{rule}-{wildcards}
-    --output=logs/{rule}/{wildcards.file_basename}-%j.out
-    --error=logs/{rule}/{wildcards.file_basename}-%j.err
+    --job-name=smk-{rule}-{params.jobname}
+    --output=logs/{rule}/{params.jobname}.out
+    --error=logs/{rule}/{params.jobname}.err
 default-resources:
   - partition=caslake
   - mem_mb=8000

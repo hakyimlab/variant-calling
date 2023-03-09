@@ -2,7 +2,7 @@
 #### Date: Mon Jan 23 2023
 #### Author: Temi
 
-> :warning: **This pipeline is not for use yet.**
+> :white_check_mark: **This pipeline is ready for use.**
 
 ## Introduction 
 
@@ -51,3 +51,5 @@ This repo contains a pipeline to call variants from fastq files. Another use cas
 ## To-do
 - [X] Remove the merging criterion; pipeline should work fine without a merging step
 - [X] Include software environment - conda or containers? Decisions, decisions
+- [ ] Correct where the temporary variants databases are stored. Ideally, should be in something like `/scratch`
+
