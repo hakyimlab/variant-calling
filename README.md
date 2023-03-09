@@ -2,6 +2,9 @@
 #### Date: Mon Jan 23 2023
 #### Author: Temi
 
+#### Acknowledgements:
+Big ups to Festus for supplying me a SLURM directive for the pipeline
+
 > :white_check_mark: **This pipeline is ready for use.**
 
 ## Introduction 
