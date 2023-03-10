@@ -1,5 +1,5 @@
 cluster:
-  mkdir -p logs/{rule} &&
+  mkdir -p logs/slurm_logs/{rule} &&
   sbatch
     --partition={resources.partition}
     --cpus-per-task={threads}
@@ -7,15 +7,15 @@ cluster:
     --time={resources.time}
     --account={resources.account}
     --job-name=smk-{rule}-{params.jobname}
-    --output=logs/{rule}/{params.jobname}.out
-    --error=logs/{rule}/{params.jobname}.err
+    --output=logs/slurm_logs/{rule}/{params.jobname}.out
+    --error=logs/slurm_logs/{rule}/{params.jobname}.err
 default-resources:
   - partition=caslake
   - mem_mb=8000
   - time="36:00:00"
   - tmpdir="/scratch/midway3/temi"
   - account="pi-haky"
-restart-times: 3
+restart-times: 1
 max-jobs-per-second: 10
 max-status-checks-per-second: 1
 local-cores: 1

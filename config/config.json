@@ -10,5 +10,5 @@
     "merge": true,
     "phase_vcfs":"true", 
     "bwa_resource":{"folder": "resource/BWAIndex", "files":["Homo_sapiens_assembly38.fasta.64"]},
-    "scratch_folder": "scratch/midway3/temi", "variants_db": "variants_DB", "chromosomes":"metadata/chromosomes.txt"
+    "scratch_folder": "/scratch/midway3/temi", "variants_db": "variants_DB", "chromosomes":"metadata/chromosomes.txt"
 }

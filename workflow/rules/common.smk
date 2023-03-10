@@ -35,6 +35,7 @@ individuals = list(grouping_dict.keys())
 read_groups = module.return_read_group_information(metadata_file)
 
 # FILES AND DIRECTORIES ===
+project_name = config["project_name"]
 CONDA_YAML_FILE = config['conda_env']
 if not os.path.isfile(CONDA_YAML_FILE):
     raise Exception("ERROR - conda yaml file cannot be found in `workflow/envs`")
@@ -42,24 +43,28 @@ DATA_DIR = "data/raw_samples"
 GVCF_DIR = "data/gvcf_files"
 REBLOCKED_GVCF_DIR = "data/reblocked_gvcf_files"
 FINAL_VCFS_DIR =  "data/final_vcfs"
-LOG_DIR = 'logs'
-TMP_DIR = 'tmp'
+fastqc_dir = "data/fastqc"
+LOG_DIR = os.path.join('logs', 'snakemake_log')
+TMP_DIR = os.path.join('/tmp', project_name)
 #BWA_INDEX = 'resource/alignment/index' # what is this?????????????
 known_variants_files = [f"--known-sites {os.path.join(config['variants_resource']['folder'], v)}" for v in config['variants_resource']['files']]
 genome_file = os.path.join(config['genome_resource']['folder'], config['genome_resource']['files'])
-print(f'GENOME FILE - {genome_file}')
+#print(f'GENOME FILE - {genome_file}')
 #bwa_index_file = f"{config['bwa_resource']['folder']['files']}"
 bwa_index_file = os.path.join(config['bwa_resource']['folder'], config['bwa_resource']['files'][0])
-scratch_folder = config['scratch_folder']
+scratch_folder = os.path.join(config['scratch_folder'], project_name)
 variants_db = config["variants_db"]
 chromosomes = pd.read_csv(config["chromosomes"], header=None).iloc[:, 0].tolist()
-project_name = config["project_name"]
 gmap_dir = config['genetic_map']['folder']
 
 if not os.path.isdir(LOG_DIR):
     os.makedirs(LOG_DIR)
 if not os.path.isdir(TMP_DIR):
     os.makedirs(TMP_DIR)
+if not os.path.isdir(scratch_folder):
+    os.makedirs(scratch_folder)
+if not os.path.isdir(fastqc_dir):
+    os.makedirs(fastqc_dir)
 
 if config['merge'] == True:
     config['merge'] = 'true'

@@ -8,14 +8,14 @@ rule call_haplotypes:
     message:
         "CALLING HAPLOTYPES - {wildcards.file_basename}"
     log:
-        call_haps_out=os.path.join(LOG_DIR, "call_haplotypes/{file_basename}_call_haps.log"),
-        call_haps_err=os.path.join(LOG_DIR, "call_haplotypes/{file_basename}_call_haps.err")
+        call_haps_out=os.path.join(LOG_DIR, "call_haplotypes/{file_basename}_call_haps.log")
     threads: 8
     params:
-        genome_file=genome_file
+        genome_file=genome_file,
+        jobname='{file_basename}'
     shell:
         """
-        (gatk HaplotypeCaller -R {params.genome_file} -I {input.recalibrated_bam_file} -O {output.gvcf_file} -ERC GVCF) 2> {log.call_haps_err} 1> {log.call_haps_out}
+        (gatk HaplotypeCaller -R {params.genome_file} -I {input.recalibrated_bam_file} -O {output.gvcf_file} -ERC GVCF) 2> {log.call_haps_out}
         """
 
 rule reblock_gvcf:
@@ -26,14 +26,14 @@ rule reblock_gvcf:
     message:
         "REBLOCKING GVCF - {wildcards.file_basename}"
     log:
-        reblock_out=os.path.join(LOG_DIR, "reblock_gvcf/{file_basename}_reblock.log"),
-        reblock_err=os.path.join(LOG_DIR, "reblock_gvcf/{file_basename}_reblock.err")
+        reblock_out=os.path.join(LOG_DIR, "reblock_gvcf/{file_basename}_reblock.log")
     threads: 8
     params:
-        genome_file=genome_file
+        genome_file=genome_file,
+        jobname='{file_basename}'
     shell:
         """
-        (gatk ReblockGVCF -R {params.genome_file} -V {input.f0} -O {output.reblocked_gvcf_file}) 2> {log.reblock_err} 1> {log.reblock_out}
+        (gatk ReblockGVCF -R {params.genome_file} -V {input.f0} -O {output.reblocked_gvcf_file}) 2> {log.reblock_out}
         """
         
 
@@ -42,9 +42,9 @@ rule create_variants_DB:
     input:
         reblocked_gvcfs=expand(rules.reblock_gvcf.output.reblocked_gvcf_file, file_basename=individuals)
     output:
-        scratch_chrom_db=directory(os.path.join(scratch_folder, "{chrom}_db")),
         variant_chrom_db=directory("data/variants_DB/{chrom}_db")
     params:
+        scratch_chrom_db=directory(os.path.join(scratch_folder, "{chrom}_db")),
         input_samples=lambda wildcards, input:' -V '.join(input.reblocked_gvcfs),
         #scratch_dir=lambda wildcards, output: os.path.dirname(output.scratch_chrom_db),
         temporary_dir=TMP_DIR,
@@ -53,10 +53,10 @@ rule create_variants_DB:
         "CREATING VARIANTS DB - {wildcards.chrom}"
     threads: 8
     log:
-        os.path.join(LOG_DIR, 'create_db/{chrom}.log')
+        create_db_out=os.path.join(LOG_DIR, 'create_db/{chrom}.log')
     shell:
         """
-        (gatk GenomicsDBImport -V {params.input_samples} --genomicsdb-workspace-path {output.scratch_chrom_db} --intervals {wildcards.chrom} --tmp-dir {params.temporary_dir} && cp -r {output.scratch_chrom_db} {output.variant_chrom_db}) 2> {log}
+        (gatk GenomicsDBImport -V {params.input_samples} --genomicsdb-workspace-path {params.scratch_chrom_db} --intervals {wildcards.chrom} --tmp-dir {params.temporary_dir} && cp -r {params.scratch_chrom_db} {output.variant_chrom_db}) 2> {log.create_db_out}
         """
 
 
@@ -72,13 +72,13 @@ rule genotype_gvcfs:
         jobname='{chrom}'
         #variant_chrom_db="data/variants_DB/{chrom}_db"
     log:
-        os.path.join(LOG_DIR, 'genotype_gvcfs/{chrom}_unphased.log')
+        genotype_gvcf_out=os.path.join(LOG_DIR, 'genotype_gvcfs/{chrom}_unphased.log')
     message:
         "GENOTYPING - {wildcards.chrom}"
     threads: 8
     shell:
         """
-        (gatk GenotypeGVCFs -R {params.genome_file} -V gendb://{input.variant_chrom_db} -O {output.unphased_chrom_vcf}) 2> {log}
+        (gatk GenotypeGVCFs -R {params.genome_file} -V gendb://{input.variant_chrom_db} -O {output.unphased_chrom_vcf}) 2> {log.genotype_gvcf_out}
         """     
 
 #=== phase vcfs ===
@@ -90,7 +90,7 @@ rule phase_vcfs:
         phased_chrom_vcf=os.path.join(FINAL_VCFS_DIR, f"phased_chromosomes/{project_name}_{{chrom}}_phased_genotypes.vcf.gz")
     threads: 4
     log:
-        os.path.join(LOG_DIR, 'genotype_gvcfs/{chrom}_phased.log')
+        phase_vcf_out=os.path.join(LOG_DIR, 'genotype_gvcfs/{chrom}_phased.log')
     params:
         gmap_dir=gmap_dir,
         jobname='{chrom}'
@@ -98,7 +98,7 @@ rule phase_vcfs:
         "PHASING VCFs - {wildcards.chrom}"
     shell:
         """
-        (shapeit4 --input {input.unphased_chrom_vcf} --map {params.gmap_dir}/{wildcards.chrom}.b38.gmap.gz --region {wildcards.chrom} --output {output.phased_chrom_vcf} --thread 4 && tabix -p vcf {output.phased_chrom_vcf}) 2> {log}
+        (shapeit4 --input {input.unphased_chrom_vcf} --map {params.gmap_dir}/{wildcards.chrom}.b38.gmap.gz --region {wildcards.chrom} --output {output.phased_chrom_vcf} --thread 4 && tabix -p vcf {output.phased_chrom_vcf}) 2> {log.phase_vcf_out}
         """
 
 # === gather the phased vcfs ===

@@ -74,5 +74,5 @@ You should do the following to set up the environment:
 - [X] Remove the merging criterion; pipeline should work fine without a merging step
 - [X] Include software environment - conda or containers? Decisions, decisions
 - [ ] Correct where the temporary variants databases are stored. Ideally, should be in something like `/scratch`
-- [ ] Use `jobname` as a param for all rules so that the SLURM directive to create error and output files appropriately
+- [X] Use `jobname` as a param for all rules so that the SLURM directive to create error and output files appropriately
 - [ ] Still deciding whether to use rule's log or SLURM log files; both will be too much extra information

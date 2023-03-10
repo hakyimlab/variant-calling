@@ -8,14 +8,16 @@ rule trim_fastq_single:
     params:
         #output_dir="data/raw_samples/trimmed_fastq",
         output_dir=lambda wildcards, output: os.path.dirname(output.rOut),
-        sample_name="{file_basename}"
+        sample_name="{file_basename}",
+        jobname='{file_basename}',
+        fastqc_dir=fastqc_dir
     message: "TRIMMING - single sample for {params.sample_name}"
     threads: 8
     log:
-        os.path.join(LOG_DIR, "trim/{file_basename}.log")
+        trim_log_out=os.path.join(LOG_DIR, "trim/{file_basename}.log")
     shell:
         """
-        (trim_galore --phred33 --cores 4 --stringency 3 --illumina {input.rIn} --output_dir {params.output_dir}) 2> {log}
+        (trim_galore --phred33 --cores 4 --stringency 3 --illumina {input.rIn} --output_dir {params.output_dir} --fastqc --fastqc_args "--outdir {params.fastqc_dir}") 2> {log.trim_log_out}
         """
 
 rule trim_fastq_paired:
@@ -28,12 +30,14 @@ rule trim_fastq_paired:
     params:
         #output_dir="data/raw_samples/trimmed_fastq",
         output_dir=lambda wildcards, output: os.path.dirname(output.r1),
-        sample_name="{file_basename}"
+        sample_name="{file_basename}",
+        jobname='{file_basename}',
+        fastqc_dir=fastqc_dir
     message: "TRIMMING - paired samples for {params.sample_name}"
     threads: 8
     log:
-        os.path.join(LOG_DIR, "trim/{file_basename}.log")
+        trim_log_out=os.path.join(LOG_DIR, "trim/{file_basename}.log")
     shell:
         """
-        (trim_galore --paired --phred33 --cores 4 --stringency 3 --illumina {input.r1} {input.r2} --output_dir {params.output_dir}) 2> {log}
+        (trim_galore --paired --phred33 --cores 4 --stringency 3 --illumina {input.r1} {input.r2} --output_dir {params.output_dir} --fastqc --fastqc_args "--outdir {params.fastqc_dir}") 2> {log.trim_log_out}
         """

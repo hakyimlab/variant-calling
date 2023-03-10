@@ -6,7 +6,7 @@ rule all:
     input:
         # expand("{data_dir}/trimmed_fastq/{fastq_file}", fastq_file=fastq_files, data_dir=DATA_DIR),
         # expand("{data_dir}/sam_files/{sample}.sam", sample=SAMPLES, data_dir=DATA_DIR),
-        # expand("{data_dir}/sorted_bam/{sample}.bam", sample=SAMPLES, data_dir=DATA_DIR),
+        # expand("{data_dir}/sorted_bam/{sample}.bam", sample=SAMPLES, data_dir=DATA_DIR)
         # expand("{data_dir}/merged_bam/{individual}.bam", individual=individuals, data_dir=DATA_DIR),
         # expand("{data_dir}/deduplicated_bam/{individual}.bam", individual=individuals, data_dir=DATA_DIR),
         # expand("{data_dir}/recalibrated_bam/{individual}_recal_data.table", individual=individuals, data_dir=DATA_DIR),

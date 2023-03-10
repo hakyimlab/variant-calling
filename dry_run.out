@@ -1,111 +1,890 @@
 Building DAG of jobs...
 Job stats:
-job                                count    min threads    max threads
--------------------------------  -------  -------------  -------------
-all                                    1              1              1
-merge_and_recalibrate_bam_files        5              1              1
-total                                  6              1              1
+job                     count    min threads    max threads
+--------------------  -------  -------------  -------------
+add_read_groups             5              1              1
+all                         1              1              1
+apply_recalibration         5              1              1
+call_haplotypes             5              1              1
+create_recalibration        5              1              1
+create_variants_DB         23              1              1
+genotype_gvcfs             23              1              1
+mark_duplicates             5              1              1
+merge_bam_files             5              1              1
+phase_vcfs                 23              1              1
+reblock_gvcf                5              1              1
+total                     105              1              1
 
 
-[Tue Mar  7 22:13:43 2023]
-Job 41: MERGING & RECALIBRATING - ind_2
-Reason: Missing output files: data/raw_samples/merged_bam/ind_2.bam, data/raw_samples/recalibrated_bam/ind_2.bam, data/raw_samples/deduplicated_bam/ind_2.bam
+[Fri Mar 10 14:13:33 2023]
+Job 46: MERGING BAM FILES - ind_2
+Reason: Missing output files: data/raw_samples/merged_bam/ind_2_norg.bam; Code has changed since last execution; Params have changed since last execution
 
 
-        (picard MergeSamFiles I=data/raw_samples/sorted_bam/SRR11856245.bam I=data/raw_samples/sorted_bam/SRR11856259.bam I=data/raw_samples/sorted_bam/SRR11856379.bam I=data/raw_samples/sorted_bam/SRR11856275.bam O=data/raw_samples/merged_bam/ind_2_norg.bam TMP_DIR=tmp CREATE_INDEX=false) 2> logs/merge_and_recalibrate/ind_2_merge.err 1> logs/merge_and_recalibrate/ind_2_merge.log
-
-        (picard AddOrReplaceReadGroups I=data/raw_samples/merged_bam/ind_2_norg.bam RGID=3 RGLB=lib3 RGSM=ind_2 RGPL=ILLUMINA RGPU=D00608:3:CB6LRANXX:103 O=data/raw_samples/merged_bam/ind_2.bam TMP_DIR=tmp CREATE_INDEX=true) 2> logs/merge_and_recalibrate/ind_2_replace_rg.err 1> logs/merge_and_recalibrate/ind_2_replace_rg.log
-
-        (picard MarkDuplicates I=data/raw_samples/merged_bam/ind_2.bam O=data/raw_samples/deduplicated_bam/ind_2.bam M=data/raw_samples/deduplicated_bam/ind_2_dedup_metrics.txt CREATE_INDEX=true TMP_DIR=tmp) 2> logs/merge_and_recalibrate/ind_2_mark_dups.err 1> logs/merge_and_recalibrate/ind_2_mark_dups.log
-
-        (gatk BaseRecalibrator -I data/raw_samples/deduplicated_bam/ind_2.bam -R resource/genome_files/Homo_sapiens_assembly38.fasta -O data/raw_samples/deduplicated_bam/ind_2_recal_data.table --tmp-dir tmp --known-sites resource/variants_files/1000G_omni2.5.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_138.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_144.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_146.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz) 2> logs/merge_and_recalibrate/ind_2_base_recalibrate.err 1> logs/merge_and_recalibrate/ind_2_base_recalibrate.log
-
-        (gatk ApplyBQSR -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/deduplicated_bam/ind_2.bam -bqsr data/raw_samples/deduplicated_bam/ind_2_recal_data.table -O data/raw_samples/recalibrated_bam/ind_2.bam --tmp-dir tmp && samtools index data/raw_samples/recalibrated_bam/ind_2.bam) 2> logs/merge_and_recalibrate/ind_2_apply_recab.err 1> logs/merge_and_recalibrate/ind_2_apply_recab.log
+        (picard MergeSamFiles I=data/raw_samples/sorted_bam/SRR11856245.bam I=data/raw_samples/sorted_bam/SRR11856259.bam I=data/raw_samples/sorted_bam/SRR11856379.bam I=data/raw_samples/sorted_bam/SRR11856275.bam O=data/raw_samples/merged_bam/ind_2_norg.bam TMP_DIR=/tmp/test_genotypes_2023 CREATE_INDEX=false) 2> logs/snakemake_log/merge/ind_2_merge.log
         
 
-[Tue Mar  7 22:13:43 2023]
-Job 42: MERGING & RECALIBRATING - ind_3
-Reason: Missing output files: data/raw_samples/merged_bam/ind_3.bam, data/raw_samples/deduplicated_bam/ind_3.bam, data/raw_samples/recalibrated_bam/ind_3.bam
+[Fri Mar 10 14:13:33 2023]
+Job 84: MERGING BAM FILES - ind_4
+Reason: Missing output files: data/raw_samples/merged_bam/ind_4_norg.bam; Code has changed since last execution; Params have changed since last execution
 
 
-        (picard MergeSamFiles I=data/raw_samples/sorted_bam/SRR11856199.bam I=data/raw_samples/sorted_bam/SRR11856404.bam I=data/raw_samples/sorted_bam/SRR11856269.bam I=data/raw_samples/sorted_bam/SRR11856266.bam O=data/raw_samples/merged_bam/ind_3_norg.bam TMP_DIR=tmp CREATE_INDEX=false) 2> logs/merge_and_recalibrate/ind_3_merge.err 1> logs/merge_and_recalibrate/ind_3_merge.log
-
-        (picard AddOrReplaceReadGroups I=data/raw_samples/merged_bam/ind_3_norg.bam RGID=4 RGLB=lib4 RGSM=ind_3 RGPL=ILLUMINA RGPU=D00608:4:CB6LRANXX:104 O=data/raw_samples/merged_bam/ind_3.bam TMP_DIR=tmp CREATE_INDEX=true) 2> logs/merge_and_recalibrate/ind_3_replace_rg.err 1> logs/merge_and_recalibrate/ind_3_replace_rg.log
-
-        (picard MarkDuplicates I=data/raw_samples/merged_bam/ind_3.bam O=data/raw_samples/deduplicated_bam/ind_3.bam M=data/raw_samples/deduplicated_bam/ind_3_dedup_metrics.txt CREATE_INDEX=true TMP_DIR=tmp) 2> logs/merge_and_recalibrate/ind_3_mark_dups.err 1> logs/merge_and_recalibrate/ind_3_mark_dups.log
-
-        (gatk BaseRecalibrator -I data/raw_samples/deduplicated_bam/ind_3.bam -R resource/genome_files/Homo_sapiens_assembly38.fasta -O data/raw_samples/deduplicated_bam/ind_3_recal_data.table --tmp-dir tmp --known-sites resource/variants_files/1000G_omni2.5.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_138.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_144.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_146.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz) 2> logs/merge_and_recalibrate/ind_3_base_recalibrate.err 1> logs/merge_and_recalibrate/ind_3_base_recalibrate.log
-
-        (gatk ApplyBQSR -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/deduplicated_bam/ind_3.bam -bqsr data/raw_samples/deduplicated_bam/ind_3_recal_data.table -O data/raw_samples/recalibrated_bam/ind_3.bam --tmp-dir tmp && samtools index data/raw_samples/recalibrated_bam/ind_3.bam) 2> logs/merge_and_recalibrate/ind_3_apply_recab.err 1> logs/merge_and_recalibrate/ind_3_apply_recab.log
+        (picard MergeSamFiles I=data/raw_samples/sorted_bam/SRR11856235.bam I=data/raw_samples/sorted_bam/SRR11856409.bam I=data/raw_samples/sorted_bam/SRR11856439.bam O=data/raw_samples/merged_bam/ind_4_norg.bam TMP_DIR=/tmp/test_genotypes_2023 CREATE_INDEX=false) 2> logs/snakemake_log/merge/ind_4_merge.log
         
 
-[Tue Mar  7 22:13:43 2023]
-Job 43: MERGING & RECALIBRATING - ind_4
-Reason: Missing output files: data/raw_samples/merged_bam/ind_4.bam, data/raw_samples/recalibrated_bam/ind_4.bam, data/raw_samples/deduplicated_bam/ind_4.bam
+[Fri Mar 10 14:13:33 2023]
+Job 65: MERGING BAM FILES - ind_3
+Reason: Missing output files: data/raw_samples/merged_bam/ind_3_norg.bam; Code has changed since last execution; Params have changed since last execution
 
 
-        (picard MergeSamFiles I=data/raw_samples/sorted_bam/SRR11856235.bam I=data/raw_samples/sorted_bam/SRR11856409.bam I=data/raw_samples/sorted_bam/SRR11856439.bam O=data/raw_samples/merged_bam/ind_4_norg.bam TMP_DIR=tmp CREATE_INDEX=false) 2> logs/merge_and_recalibrate/ind_4_merge.err 1> logs/merge_and_recalibrate/ind_4_merge.log
-
-        (picard AddOrReplaceReadGroups I=data/raw_samples/merged_bam/ind_4_norg.bam RGID=5 RGLB=lib5 RGSM=ind_4 RGPL=ILLUMINA RGPU=D00608:5:CB6LRANXX:105 O=data/raw_samples/merged_bam/ind_4.bam TMP_DIR=tmp CREATE_INDEX=true) 2> logs/merge_and_recalibrate/ind_4_replace_rg.err 1> logs/merge_and_recalibrate/ind_4_replace_rg.log
-
-        (picard MarkDuplicates I=data/raw_samples/merged_bam/ind_4.bam O=data/raw_samples/deduplicated_bam/ind_4.bam M=data/raw_samples/deduplicated_bam/ind_4_dedup_metrics.txt CREATE_INDEX=true TMP_DIR=tmp) 2> logs/merge_and_recalibrate/ind_4_mark_dups.err 1> logs/merge_and_recalibrate/ind_4_mark_dups.log
-
-        (gatk BaseRecalibrator -I data/raw_samples/deduplicated_bam/ind_4.bam -R resource/genome_files/Homo_sapiens_assembly38.fasta -O data/raw_samples/deduplicated_bam/ind_4_recal_data.table --tmp-dir tmp --known-sites resource/variants_files/1000G_omni2.5.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_138.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_144.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_146.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz) 2> logs/merge_and_recalibrate/ind_4_base_recalibrate.err 1> logs/merge_and_recalibrate/ind_4_base_recalibrate.log
-
-        (gatk ApplyBQSR -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/deduplicated_bam/ind_4.bam -bqsr data/raw_samples/deduplicated_bam/ind_4_recal_data.table -O data/raw_samples/recalibrated_bam/ind_4.bam --tmp-dir tmp && samtools index data/raw_samples/recalibrated_bam/ind_4.bam) 2> logs/merge_and_recalibrate/ind_4_apply_recab.err 1> logs/merge_and_recalibrate/ind_4_apply_recab.log
+        (picard MergeSamFiles I=data/raw_samples/sorted_bam/SRR11856199.bam I=data/raw_samples/sorted_bam/SRR11856404.bam I=data/raw_samples/sorted_bam/SRR11856269.bam I=data/raw_samples/sorted_bam/SRR11856266.bam O=data/raw_samples/merged_bam/ind_3_norg.bam TMP_DIR=/tmp/test_genotypes_2023 CREATE_INDEX=false) 2> logs/snakemake_log/merge/ind_3_merge.log
         
 
-[Tue Mar  7 22:13:43 2023]
-Job 39: MERGING & RECALIBRATING - ind_0
-Reason: Missing output files: data/raw_samples/deduplicated_bam/ind_0.bam, data/raw_samples/recalibrated_bam/ind_0.bam, data/raw_samples/merged_bam/ind_0.bam
+[Fri Mar 10 14:13:33 2023]
+Job 8: MERGING BAM FILES - ind_0
+Reason: Missing output files: data/raw_samples/merged_bam/ind_0_norg.bam
 
 
-        (picard MergeSamFiles I=data/raw_samples/sorted_bam/SRR11856372.bam I=data/raw_samples/sorted_bam/SRR11856305.bam I=data/raw_samples/sorted_bam/SRR11856407.bam I=data/raw_samples/sorted_bam/SRR11856288.bam O=data/raw_samples/merged_bam/ind_0_norg.bam TMP_DIR=tmp CREATE_INDEX=false) 2> logs/merge_and_recalibrate/ind_0_merge.err 1> logs/merge_and_recalibrate/ind_0_merge.log
-
-        (picard AddOrReplaceReadGroups I=data/raw_samples/merged_bam/ind_0_norg.bam RGID=1 RGLB=lib1 RGSM=ind_0 RGPL=ILLUMINA RGPU=D00608:1:CB6LRANXX:101 O=data/raw_samples/merged_bam/ind_0.bam TMP_DIR=tmp CREATE_INDEX=true) 2> logs/merge_and_recalibrate/ind_0_replace_rg.err 1> logs/merge_and_recalibrate/ind_0_replace_rg.log
-
-        (picard MarkDuplicates I=data/raw_samples/merged_bam/ind_0.bam O=data/raw_samples/deduplicated_bam/ind_0.bam M=data/raw_samples/deduplicated_bam/ind_0_dedup_metrics.txt CREATE_INDEX=true TMP_DIR=tmp) 2> logs/merge_and_recalibrate/ind_0_mark_dups.err 1> logs/merge_and_recalibrate/ind_0_mark_dups.log
-
-        (gatk BaseRecalibrator -I data/raw_samples/deduplicated_bam/ind_0.bam -R resource/genome_files/Homo_sapiens_assembly38.fasta -O data/raw_samples/deduplicated_bam/ind_0_recal_data.table --tmp-dir tmp --known-sites resource/variants_files/1000G_omni2.5.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_138.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_144.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_146.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz) 2> logs/merge_and_recalibrate/ind_0_base_recalibrate.err 1> logs/merge_and_recalibrate/ind_0_base_recalibrate.log
-
-        (gatk ApplyBQSR -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/deduplicated_bam/ind_0.bam -bqsr data/raw_samples/deduplicated_bam/ind_0_recal_data.table -O data/raw_samples/recalibrated_bam/ind_0.bam --tmp-dir tmp && samtools index data/raw_samples/recalibrated_bam/ind_0.bam) 2> logs/merge_and_recalibrate/ind_0_apply_recab.err 1> logs/merge_and_recalibrate/ind_0_apply_recab.log
+        (picard MergeSamFiles I=data/raw_samples/sorted_bam/SRR11856372.bam I=data/raw_samples/sorted_bam/SRR11856305.bam I=data/raw_samples/sorted_bam/SRR11856407.bam I=data/raw_samples/sorted_bam/SRR11856288.bam O=data/raw_samples/merged_bam/ind_0_norg.bam TMP_DIR=/tmp/test_genotypes_2023 CREATE_INDEX=false) 2> logs/snakemake_log/merge/ind_0_merge.log
         
 
-[Tue Mar  7 22:13:43 2023]
-Job 40: MERGING & RECALIBRATING - ind_1
-Reason: Missing output files: data/raw_samples/merged_bam/ind_1.bam, data/raw_samples/deduplicated_bam/ind_1.bam, data/raw_samples/recalibrated_bam/ind_1.bam
+[Fri Mar 10 14:13:33 2023]
+Job 27: MERGING BAM FILES - ind_1
+Reason: Missing output files: data/raw_samples/merged_bam/ind_1_norg.bam; Code has changed since last execution; Params have changed since last execution
 
 
-        (picard MergeSamFiles I=data/raw_samples/sorted_bam/SRR11856200.bam I=data/raw_samples/sorted_bam/SRR11856309.bam I=data/raw_samples/sorted_bam/SRR11856198.bam I=data/raw_samples/sorted_bam/SRR11856364.bam O=data/raw_samples/merged_bam/ind_1_norg.bam TMP_DIR=tmp CREATE_INDEX=false) 2> logs/merge_and_recalibrate/ind_1_merge.err 1> logs/merge_and_recalibrate/ind_1_merge.log
-
-        (picard AddOrReplaceReadGroups I=data/raw_samples/merged_bam/ind_1_norg.bam RGID=2 RGLB=lib2 RGSM=ind_1 RGPL=ILLUMINA RGPU=D00608:2:CB6LRANXX:102 O=data/raw_samples/merged_bam/ind_1.bam TMP_DIR=tmp CREATE_INDEX=true) 2> logs/merge_and_recalibrate/ind_1_replace_rg.err 1> logs/merge_and_recalibrate/ind_1_replace_rg.log
-
-        (picard MarkDuplicates I=data/raw_samples/merged_bam/ind_1.bam O=data/raw_samples/deduplicated_bam/ind_1.bam M=data/raw_samples/deduplicated_bam/ind_1_dedup_metrics.txt CREATE_INDEX=true TMP_DIR=tmp) 2> logs/merge_and_recalibrate/ind_1_mark_dups.err 1> logs/merge_and_recalibrate/ind_1_mark_dups.log
-
-        (gatk BaseRecalibrator -I data/raw_samples/deduplicated_bam/ind_1.bam -R resource/genome_files/Homo_sapiens_assembly38.fasta -O data/raw_samples/deduplicated_bam/ind_1_recal_data.table --tmp-dir tmp --known-sites resource/variants_files/1000G_omni2.5.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_138.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_144.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_146.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz) 2> logs/merge_and_recalibrate/ind_1_base_recalibrate.err 1> logs/merge_and_recalibrate/ind_1_base_recalibrate.log
-
-        (gatk ApplyBQSR -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/deduplicated_bam/ind_1.bam -bqsr data/raw_samples/deduplicated_bam/ind_1_recal_data.table -O data/raw_samples/recalibrated_bam/ind_1.bam --tmp-dir tmp && samtools index data/raw_samples/recalibrated_bam/ind_1.bam) 2> logs/merge_and_recalibrate/ind_1_apply_recab.err 1> logs/merge_and_recalibrate/ind_1_apply_recab.log
+        (picard MergeSamFiles I=data/raw_samples/sorted_bam/SRR11856200.bam I=data/raw_samples/sorted_bam/SRR11856309.bam I=data/raw_samples/sorted_bam/SRR11856198.bam I=data/raw_samples/sorted_bam/SRR11856364.bam O=data/raw_samples/merged_bam/ind_1_norg.bam TMP_DIR=/tmp/test_genotypes_2023 CREATE_INDEX=false) 2> logs/snakemake_log/merge/ind_1_merge.log
         
 
-[Tue Mar  7 22:13:43 2023]
+[Fri Mar 10 14:13:33 2023]
+Job 45: ADDING READ GROUPS - ind_2
+Reason: Missing output files: data/raw_samples/merged_bam/ind_2.bam, data/raw_samples/merged_bam/ind_2.bai; Input files updated by another job: data/raw_samples/merged_bam/ind_2_norg.bam
+
+
+        (picard AddOrReplaceReadGroups I=data/raw_samples/merged_bam/ind_2_norg.bam RGID=3 RGLB=lib3 RGSM=ind_2 RGPL=ILLUMINA RGPU=D00608:3:CB6LRANXX:103 O=data/raw_samples/merged_bam/ind_2.bam TMP_DIR=/tmp/test_genotypes_2023 CREATE_INDEX=true) 2> logs/snakemake_log/merge/ind_2_replace_rg.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 7: ADDING READ GROUPS - ind_0
+Reason: Missing output files: data/raw_samples/merged_bam/ind_0.bam, data/raw_samples/merged_bam/ind_0.bai; Input files updated by another job: data/raw_samples/merged_bam/ind_0_norg.bam; Code has changed since last execution; Params have changed since last execution
+
+
+        (picard AddOrReplaceReadGroups I=data/raw_samples/merged_bam/ind_0_norg.bam RGID=1 RGLB=lib1 RGSM=ind_0 RGPL=ILLUMINA RGPU=D00608:1:CB6LRANXX:101 O=data/raw_samples/merged_bam/ind_0.bam TMP_DIR=/tmp/test_genotypes_2023 CREATE_INDEX=true) 2> logs/snakemake_log/merge/ind_0_replace_rg.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 64: ADDING READ GROUPS - ind_3
+Reason: Missing output files: data/raw_samples/merged_bam/ind_3.bam, data/raw_samples/merged_bam/ind_3.bai; Input files updated by another job: data/raw_samples/merged_bam/ind_3_norg.bam
+
+
+        (picard AddOrReplaceReadGroups I=data/raw_samples/merged_bam/ind_3_norg.bam RGID=4 RGLB=lib4 RGSM=ind_3 RGPL=ILLUMINA RGPU=D00608:4:CB6LRANXX:104 O=data/raw_samples/merged_bam/ind_3.bam TMP_DIR=/tmp/test_genotypes_2023 CREATE_INDEX=true) 2> logs/snakemake_log/merge/ind_3_replace_rg.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 83: ADDING READ GROUPS - ind_4
+Reason: Missing output files: data/raw_samples/merged_bam/ind_4.bam, data/raw_samples/merged_bam/ind_4.bai; Input files updated by another job: data/raw_samples/merged_bam/ind_4_norg.bam
+
+
+        (picard AddOrReplaceReadGroups I=data/raw_samples/merged_bam/ind_4_norg.bam RGID=5 RGLB=lib5 RGSM=ind_4 RGPL=ILLUMINA RGPU=D00608:5:CB6LRANXX:105 O=data/raw_samples/merged_bam/ind_4.bam TMP_DIR=/tmp/test_genotypes_2023 CREATE_INDEX=true) 2> logs/snakemake_log/merge/ind_4_replace_rg.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 26: ADDING READ GROUPS - ind_1
+Reason: Missing output files: data/raw_samples/merged_bam/ind_1.bai, data/raw_samples/merged_bam/ind_1.bam; Input files updated by another job: data/raw_samples/merged_bam/ind_1_norg.bam
+
+
+        (picard AddOrReplaceReadGroups I=data/raw_samples/merged_bam/ind_1_norg.bam RGID=2 RGLB=lib2 RGSM=ind_1 RGPL=ILLUMINA RGPU=D00608:2:CB6LRANXX:102 O=data/raw_samples/merged_bam/ind_1.bam TMP_DIR=/tmp/test_genotypes_2023 CREATE_INDEX=true) 2> logs/snakemake_log/merge/ind_1_replace_rg.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 44: MARKING DUPLICATES - ind_2
+Reason: Missing output files: data/raw_samples/deduplicated_bam/ind_2_dedup_metrics.txt, data/raw_samples/deduplicated_bam/ind_2.bam, data/raw_samples/deduplicated_bam/ind_2.bai; Input files updated by another job: data/raw_samples/merged_bam/ind_2.bam, data/raw_samples/merged_bam/ind_2.bai
+
+
+        (picard MarkDuplicates I=data/raw_samples/merged_bam/ind_2.bam O=data/raw_samples/deduplicated_bam/ind_2.bam M=data/raw_samples/deduplicated_bam/ind_2_dedup_metrics.txt CREATE_INDEX=true TMP_DIR=/tmp/test_genotypes_2023) 2> logs/snakemake_log/merge/ind_2_mark_dups.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 82: MARKING DUPLICATES - ind_4
+Reason: Missing output files: data/raw_samples/deduplicated_bam/ind_4_dedup_metrics.txt, data/raw_samples/deduplicated_bam/ind_4.bam, data/raw_samples/deduplicated_bam/ind_4.bai; Input files updated by another job: data/raw_samples/merged_bam/ind_4.bam, data/raw_samples/merged_bam/ind_4.bai
+
+
+        (picard MarkDuplicates I=data/raw_samples/merged_bam/ind_4.bam O=data/raw_samples/deduplicated_bam/ind_4.bam M=data/raw_samples/deduplicated_bam/ind_4_dedup_metrics.txt CREATE_INDEX=true TMP_DIR=/tmp/test_genotypes_2023) 2> logs/snakemake_log/merge/ind_4_mark_dups.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 63: MARKING DUPLICATES - ind_3
+Reason: Missing output files: data/raw_samples/deduplicated_bam/ind_3.bam, data/raw_samples/deduplicated_bam/ind_3_dedup_metrics.txt, data/raw_samples/deduplicated_bam/ind_3.bai; Input files updated by another job: data/raw_samples/merged_bam/ind_3.bam, data/raw_samples/merged_bam/ind_3.bai
+
+
+        (picard MarkDuplicates I=data/raw_samples/merged_bam/ind_3.bam O=data/raw_samples/deduplicated_bam/ind_3.bam M=data/raw_samples/deduplicated_bam/ind_3_dedup_metrics.txt CREATE_INDEX=true TMP_DIR=/tmp/test_genotypes_2023) 2> logs/snakemake_log/merge/ind_3_mark_dups.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 6: MARKING DUPLICATES - ind_0
+Reason: Missing output files: data/raw_samples/deduplicated_bam/ind_0.bai, data/raw_samples/deduplicated_bam/ind_0.bam, data/raw_samples/deduplicated_bam/ind_0_dedup_metrics.txt; Input files updated by another job: data/raw_samples/merged_bam/ind_0.bam, data/raw_samples/merged_bam/ind_0.bai
+
+
+        (picard MarkDuplicates I=data/raw_samples/merged_bam/ind_0.bam O=data/raw_samples/deduplicated_bam/ind_0.bam M=data/raw_samples/deduplicated_bam/ind_0_dedup_metrics.txt CREATE_INDEX=true TMP_DIR=/tmp/test_genotypes_2023) 2> logs/snakemake_log/merge/ind_0_mark_dups.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 25: MARKING DUPLICATES - ind_1
+Reason: Missing output files: data/raw_samples/deduplicated_bam/ind_1.bai, data/raw_samples/deduplicated_bam/ind_1.bam, data/raw_samples/deduplicated_bam/ind_1_dedup_metrics.txt; Input files updated by another job: data/raw_samples/merged_bam/ind_1.bai, data/raw_samples/merged_bam/ind_1.bam
+
+
+        (picard MarkDuplicates I=data/raw_samples/merged_bam/ind_1.bam O=data/raw_samples/deduplicated_bam/ind_1.bam M=data/raw_samples/deduplicated_bam/ind_1_dedup_metrics.txt CREATE_INDEX=true TMP_DIR=/tmp/test_genotypes_2023) 2> logs/snakemake_log/merge/ind_1_mark_dups.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 78: CREATING RECALIBRATION - ind_3
+Reason: Missing output files: data/raw_samples/recalibrated_bam/ind_3_recal_data.table; Input files updated by another job: data/raw_samples/deduplicated_bam/ind_3.bam, data/raw_samples/deduplicated_bam/ind_3_dedup_metrics.txt, data/raw_samples/deduplicated_bam/ind_3.bai
+
+
+        (gatk BaseRecalibrator -I data/raw_samples/deduplicated_bam/ind_3.bam -R resource/genome_files/Homo_sapiens_assembly38.fasta -O data/raw_samples/recalibrated_bam/ind_3_recal_data.table --tmp-dir /tmp/test_genotypes_2023 --known-sites resource/variants_files/1000G_omni2.5.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_138.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_144.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_146.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz) 2> logs/snakemake_log/merge/ind_3_base_recalibrate.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 21: CREATING RECALIBRATION - ind_0
+Reason: Missing output files: data/raw_samples/recalibrated_bam/ind_0_recal_data.table; Input files updated by another job: data/raw_samples/deduplicated_bam/ind_0.bai, data/raw_samples/deduplicated_bam/ind_0.bam, data/raw_samples/deduplicated_bam/ind_0_dedup_metrics.txt
+
+
+        (gatk BaseRecalibrator -I data/raw_samples/deduplicated_bam/ind_0.bam -R resource/genome_files/Homo_sapiens_assembly38.fasta -O data/raw_samples/recalibrated_bam/ind_0_recal_data.table --tmp-dir /tmp/test_genotypes_2023 --known-sites resource/variants_files/1000G_omni2.5.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_138.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_144.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_146.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz) 2> logs/snakemake_log/merge/ind_0_base_recalibrate.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 40: CREATING RECALIBRATION - ind_1
+Reason: Missing output files: data/raw_samples/recalibrated_bam/ind_1_recal_data.table; Input files updated by another job: data/raw_samples/deduplicated_bam/ind_1.bai, data/raw_samples/deduplicated_bam/ind_1.bam, data/raw_samples/deduplicated_bam/ind_1_dedup_metrics.txt
+
+
+        (gatk BaseRecalibrator -I data/raw_samples/deduplicated_bam/ind_1.bam -R resource/genome_files/Homo_sapiens_assembly38.fasta -O data/raw_samples/recalibrated_bam/ind_1_recal_data.table --tmp-dir /tmp/test_genotypes_2023 --known-sites resource/variants_files/1000G_omni2.5.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_138.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_144.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_146.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz) 2> logs/snakemake_log/merge/ind_1_base_recalibrate.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 59: CREATING RECALIBRATION - ind_2
+Reason: Missing output files: data/raw_samples/recalibrated_bam/ind_2_recal_data.table; Input files updated by another job: data/raw_samples/deduplicated_bam/ind_2_dedup_metrics.txt, data/raw_samples/deduplicated_bam/ind_2.bam, data/raw_samples/deduplicated_bam/ind_2.bai
+
+
+        (gatk BaseRecalibrator -I data/raw_samples/deduplicated_bam/ind_2.bam -R resource/genome_files/Homo_sapiens_assembly38.fasta -O data/raw_samples/recalibrated_bam/ind_2_recal_data.table --tmp-dir /tmp/test_genotypes_2023 --known-sites resource/variants_files/1000G_omni2.5.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_138.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_144.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_146.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz) 2> logs/snakemake_log/merge/ind_2_base_recalibrate.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 94: CREATING RECALIBRATION - ind_4
+Reason: Missing output files: data/raw_samples/recalibrated_bam/ind_4_recal_data.table; Input files updated by another job: data/raw_samples/deduplicated_bam/ind_4_dedup_metrics.txt, data/raw_samples/deduplicated_bam/ind_4.bam, data/raw_samples/deduplicated_bam/ind_4.bai
+
+
+        (gatk BaseRecalibrator -I data/raw_samples/deduplicated_bam/ind_4.bam -R resource/genome_files/Homo_sapiens_assembly38.fasta -O data/raw_samples/recalibrated_bam/ind_4_recal_data.table --tmp-dir /tmp/test_genotypes_2023 --known-sites resource/variants_files/1000G_omni2.5.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_138.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/1000G_phase1.snps.high_confidence.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_144.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/dbsnp_146.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/Mills_and_1000G_gold_standard.indels.hg38_chrRenamed.vcf.gz --known-sites resource/variants_files/hapmap_3.3_grch38_pop_stratified_af_chrRenamed.vcf.gz) 2> logs/snakemake_log/merge/ind_4_base_recalibrate.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 5: APPLYING RECALIBRATION - ind_0
+Reason: Missing output files: data/raw_samples/recalibrated_bam/ind_0.bam.bai, data/raw_samples/recalibrated_bam/ind_0.bam; Input files updated by another job: data/raw_samples/deduplicated_bam/ind_0.bai, data/raw_samples/recalibrated_bam/ind_0_recal_data.table, data/raw_samples/deduplicated_bam/ind_0.bam
+
+
+        (gatk ApplyBQSR -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/deduplicated_bam/ind_0.bam -bqsr data/raw_samples/recalibrated_bam/ind_0_recal_data.table -O data/raw_samples/recalibrated_bam/ind_0.bam --tmp-dir /tmp/test_genotypes_2023 && samtools index data/raw_samples/recalibrated_bam/ind_0.bam) 2> logs/snakemake_log/merge/ind_0_apply_recab.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 62: APPLYING RECALIBRATION - ind_3
+Reason: Missing output files: data/raw_samples/recalibrated_bam/ind_3.bam.bai, data/raw_samples/recalibrated_bam/ind_3.bam; Input files updated by another job: data/raw_samples/deduplicated_bam/ind_3.bam, data/raw_samples/deduplicated_bam/ind_3.bai, data/raw_samples/recalibrated_bam/ind_3_recal_data.table
+
+
+        (gatk ApplyBQSR -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/deduplicated_bam/ind_3.bam -bqsr data/raw_samples/recalibrated_bam/ind_3_recal_data.table -O data/raw_samples/recalibrated_bam/ind_3.bam --tmp-dir /tmp/test_genotypes_2023 && samtools index data/raw_samples/recalibrated_bam/ind_3.bam) 2> logs/snakemake_log/merge/ind_3_apply_recab.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 81: APPLYING RECALIBRATION - ind_4
+Reason: Missing output files: data/raw_samples/recalibrated_bam/ind_4.bam, data/raw_samples/recalibrated_bam/ind_4.bam.bai; Input files updated by another job: data/raw_samples/deduplicated_bam/ind_4.bam, data/raw_samples/recalibrated_bam/ind_4_recal_data.table, data/raw_samples/deduplicated_bam/ind_4.bai
+
+
+        (gatk ApplyBQSR -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/deduplicated_bam/ind_4.bam -bqsr data/raw_samples/recalibrated_bam/ind_4_recal_data.table -O data/raw_samples/recalibrated_bam/ind_4.bam --tmp-dir /tmp/test_genotypes_2023 && samtools index data/raw_samples/recalibrated_bam/ind_4.bam) 2> logs/snakemake_log/merge/ind_4_apply_recab.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 24: APPLYING RECALIBRATION - ind_1
+Reason: Missing output files: data/raw_samples/recalibrated_bam/ind_1.bam.bai, data/raw_samples/recalibrated_bam/ind_1.bam; Input files updated by another job: data/raw_samples/recalibrated_bam/ind_1_recal_data.table, data/raw_samples/deduplicated_bam/ind_1.bai, data/raw_samples/deduplicated_bam/ind_1.bam
+
+
+        (gatk ApplyBQSR -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/deduplicated_bam/ind_1.bam -bqsr data/raw_samples/recalibrated_bam/ind_1_recal_data.table -O data/raw_samples/recalibrated_bam/ind_1.bam --tmp-dir /tmp/test_genotypes_2023 && samtools index data/raw_samples/recalibrated_bam/ind_1.bam) 2> logs/snakemake_log/merge/ind_1_apply_recab.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 43: APPLYING RECALIBRATION - ind_2
+Reason: Missing output files: data/raw_samples/recalibrated_bam/ind_2.bam, data/raw_samples/recalibrated_bam/ind_2.bam.bai; Input files updated by another job: data/raw_samples/recalibrated_bam/ind_2_recal_data.table, data/raw_samples/deduplicated_bam/ind_2.bam, data/raw_samples/deduplicated_bam/ind_2.bai
+
+
+        (gatk ApplyBQSR -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/deduplicated_bam/ind_2.bam -bqsr data/raw_samples/recalibrated_bam/ind_2_recal_data.table -O data/raw_samples/recalibrated_bam/ind_2.bam --tmp-dir /tmp/test_genotypes_2023 && samtools index data/raw_samples/recalibrated_bam/ind_2.bam) 2> logs/snakemake_log/merge/ind_2_apply_recab.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 4: CALLING HAPLOTYPES - ind_0
+Reason: Missing output files: data/gvcf_files/ind_0.g.vcf.gz; Input files updated by another job: data/raw_samples/recalibrated_bam/ind_0.bam.bai, data/raw_samples/recalibrated_bam/ind_0.bam
+
+
+        (gatk HaplotypeCaller -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/recalibrated_bam/ind_0.bam -O data/gvcf_files/ind_0.g.vcf.gz -ERC GVCF) 2> logs/snakemake_log/call_haplotypes/ind_0_call_haps.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 80: CALLING HAPLOTYPES - ind_4
+Reason: Missing output files: data/gvcf_files/ind_4.g.vcf.gz; Input files updated by another job: data/raw_samples/recalibrated_bam/ind_4.bam, data/raw_samples/recalibrated_bam/ind_4.bam.bai
+
+
+        (gatk HaplotypeCaller -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/recalibrated_bam/ind_4.bam -O data/gvcf_files/ind_4.g.vcf.gz -ERC GVCF) 2> logs/snakemake_log/call_haplotypes/ind_4_call_haps.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 23: CALLING HAPLOTYPES - ind_1
+Reason: Missing output files: data/gvcf_files/ind_1.g.vcf.gz; Input files updated by another job: data/raw_samples/recalibrated_bam/ind_1.bam.bai, data/raw_samples/recalibrated_bam/ind_1.bam
+
+
+        (gatk HaplotypeCaller -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/recalibrated_bam/ind_1.bam -O data/gvcf_files/ind_1.g.vcf.gz -ERC GVCF) 2> logs/snakemake_log/call_haplotypes/ind_1_call_haps.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 42: CALLING HAPLOTYPES - ind_2
+Reason: Missing output files: data/gvcf_files/ind_2.g.vcf.gz; Input files updated by another job: data/raw_samples/recalibrated_bam/ind_2.bam, data/raw_samples/recalibrated_bam/ind_2.bam.bai
+
+
+        (gatk HaplotypeCaller -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/recalibrated_bam/ind_2.bam -O data/gvcf_files/ind_2.g.vcf.gz -ERC GVCF) 2> logs/snakemake_log/call_haplotypes/ind_2_call_haps.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 61: CALLING HAPLOTYPES - ind_3
+Reason: Missing output files: data/gvcf_files/ind_3.g.vcf.gz; Input files updated by another job: data/raw_samples/recalibrated_bam/ind_3.bam.bai, data/raw_samples/recalibrated_bam/ind_3.bam
+
+
+        (gatk HaplotypeCaller -R resource/genome_files/Homo_sapiens_assembly38.fasta -I data/raw_samples/recalibrated_bam/ind_3.bam -O data/gvcf_files/ind_3.g.vcf.gz -ERC GVCF) 2> logs/snakemake_log/call_haplotypes/ind_3_call_haps.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 79: REBLOCKING GVCF - ind_4
+Reason: Missing output files: data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz; Input files updated by another job: data/gvcf_files/ind_4.g.vcf.gz
+
+
+        (gatk ReblockGVCF -R resource/genome_files/Homo_sapiens_assembly38.fasta -V data/gvcf_files/ind_4.g.vcf.gz -O data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz) 2> logs/snakemake_log/reblock_gvcf/ind_4_reblock.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 22: REBLOCKING GVCF - ind_1
+Reason: Missing output files: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz; Input files updated by another job: data/gvcf_files/ind_1.g.vcf.gz
+
+
+        (gatk ReblockGVCF -R resource/genome_files/Homo_sapiens_assembly38.fasta -V data/gvcf_files/ind_1.g.vcf.gz -O data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz) 2> logs/snakemake_log/reblock_gvcf/ind_1_reblock.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 41: REBLOCKING GVCF - ind_2
+Reason: Missing output files: data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz; Input files updated by another job: data/gvcf_files/ind_2.g.vcf.gz
+
+
+        (gatk ReblockGVCF -R resource/genome_files/Homo_sapiens_assembly38.fasta -V data/gvcf_files/ind_2.g.vcf.gz -O data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz) 2> logs/snakemake_log/reblock_gvcf/ind_2_reblock.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 60: REBLOCKING GVCF - ind_3
+Reason: Missing output files: data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz; Input files updated by another job: data/gvcf_files/ind_3.g.vcf.gz
+
+
+        (gatk ReblockGVCF -R resource/genome_files/Homo_sapiens_assembly38.fasta -V data/gvcf_files/ind_3.g.vcf.gz -O data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz) 2> logs/snakemake_log/reblock_gvcf/ind_3_reblock.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 3: REBLOCKING GVCF - ind_0
+Reason: Missing output files: data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz; Input files updated by another job: data/gvcf_files/ind_0.g.vcf.gz
+
+
+        (gatk ReblockGVCF -R resource/genome_files/Homo_sapiens_assembly38.fasta -V data/gvcf_files/ind_0.g.vcf.gz -O data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz) 2> logs/snakemake_log/reblock_gvcf/ind_0_reblock.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 96: CREATING VARIANTS DB - chr2
+Reason: Missing output files: data/variants_DB/chr2_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr2_db --intervals chr2 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr2_db data/variants_DB/chr2_db) 2> logs/snakemake_log/create_db/chr2.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 110: CREATING VARIANTS DB - chr9
+Reason: Missing output files: data/variants_DB/chr9_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr9_db --intervals chr9 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr9_db data/variants_DB/chr9_db) 2> logs/snakemake_log/create_db/chr9.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 124: CREATING VARIANTS DB - chr16
+Reason: Missing output files: data/variants_DB/chr16_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr16_db --intervals chr16 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr16_db data/variants_DB/chr16_db) 2> logs/snakemake_log/create_db/chr16.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 138: CREATING VARIANTS DB - chrX
+Reason: Missing output files: data/variants_DB/chrX_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chrX_db --intervals chrX --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chrX_db data/variants_DB/chrX_db) 2> logs/snakemake_log/create_db/chrX.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 100: CREATING VARIANTS DB - chr4
+Reason: Missing output files: data/variants_DB/chr4_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr4_db --intervals chr4 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr4_db data/variants_DB/chr4_db) 2> logs/snakemake_log/create_db/chr4.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 114: CREATING VARIANTS DB - chr11
+Reason: Missing output files: data/variants_DB/chr11_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr11_db --intervals chr11 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr11_db data/variants_DB/chr11_db) 2> logs/snakemake_log/create_db/chr11.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 128: CREATING VARIANTS DB - chr18
+Reason: Missing output files: data/variants_DB/chr18_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr18_db --intervals chr18 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr18_db data/variants_DB/chr18_db) 2> logs/snakemake_log/create_db/chr18.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 106: CREATING VARIANTS DB - chr7
+Reason: Missing output files: data/variants_DB/chr7_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr7_db --intervals chr7 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr7_db data/variants_DB/chr7_db) 2> logs/snakemake_log/create_db/chr7.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 104: CREATING VARIANTS DB - chr6
+Reason: Missing output files: data/variants_DB/chr6_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr6_db --intervals chr6 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr6_db data/variants_DB/chr6_db) 2> logs/snakemake_log/create_db/chr6.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 118: CREATING VARIANTS DB - chr13
+Reason: Missing output files: data/variants_DB/chr13_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr13_db --intervals chr13 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr13_db data/variants_DB/chr13_db) 2> logs/snakemake_log/create_db/chr13.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 132: CREATING VARIANTS DB - chr20
+Reason: Missing output files: data/variants_DB/chr20_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr20_db --intervals chr20 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr20_db data/variants_DB/chr20_db) 2> logs/snakemake_log/create_db/chr20.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 122: CREATING VARIANTS DB - chr15
+Reason: Missing output files: data/variants_DB/chr15_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr15_db --intervals chr15 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr15_db data/variants_DB/chr15_db) 2> logs/snakemake_log/create_db/chr15.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 108: CREATING VARIANTS DB - chr8
+Reason: Missing output files: data/variants_DB/chr8_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr8_db --intervals chr8 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr8_db data/variants_DB/chr8_db) 2> logs/snakemake_log/create_db/chr8.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 2: CREATING VARIANTS DB - chr1
+Reason: Missing output files: data/variants_DB/chr1_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr1_db --intervals chr1 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr1_db data/variants_DB/chr1_db) 2> logs/snakemake_log/create_db/chr1.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 136: CREATING VARIANTS DB - chr22
+Reason: Missing output files: data/variants_DB/chr22_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr22_db --intervals chr22 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr22_db data/variants_DB/chr22_db) 2> logs/snakemake_log/create_db/chr22.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 98: CREATING VARIANTS DB - chr3
+Reason: Missing output files: data/variants_DB/chr3_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr3_db --intervals chr3 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr3_db data/variants_DB/chr3_db) 2> logs/snakemake_log/create_db/chr3.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 112: CREATING VARIANTS DB - chr10
+Reason: Missing output files: data/variants_DB/chr10_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr10_db --intervals chr10 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr10_db data/variants_DB/chr10_db) 2> logs/snakemake_log/create_db/chr10.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 126: CREATING VARIANTS DB - chr17
+Reason: Missing output files: data/variants_DB/chr17_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr17_db --intervals chr17 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr17_db data/variants_DB/chr17_db) 2> logs/snakemake_log/create_db/chr17.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 134: CREATING VARIANTS DB - chr21
+Reason: Missing output files: data/variants_DB/chr21_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr21_db --intervals chr21 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr21_db data/variants_DB/chr21_db) 2> logs/snakemake_log/create_db/chr21.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 102: CREATING VARIANTS DB - chr5
+Reason: Missing output files: data/variants_DB/chr5_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr5_db --intervals chr5 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr5_db data/variants_DB/chr5_db) 2> logs/snakemake_log/create_db/chr5.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 116: CREATING VARIANTS DB - chr12
+Reason: Missing output files: data/variants_DB/chr12_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr12_db --intervals chr12 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr12_db data/variants_DB/chr12_db) 2> logs/snakemake_log/create_db/chr12.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 130: CREATING VARIANTS DB - chr19
+Reason: Missing output files: data/variants_DB/chr19_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr19_db --intervals chr19 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr19_db data/variants_DB/chr19_db) 2> logs/snakemake_log/create_db/chr19.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 120: CREATING VARIANTS DB - chr14
+Reason: Missing output files: data/variants_DB/chr14_db; Input files updated by another job: data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz, data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz
+
+
+        (gatk GenomicsDBImport -V data/reblocked_gvcf_files/ind_0.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_1.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_2.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_3.reblocked.g.vcf.gz -V data/reblocked_gvcf_files/ind_4.reblocked.g.vcf.gz --genomicsdb-workspace-path /scratch/midway3/temi/test_genotypes_2023/chr14_db --intervals chr14 --tmp-dir /tmp/test_genotypes_2023 && cp -r /scratch/midway3/temi/test_genotypes_2023/chr14_db data/variants_DB/chr14_db) 2> logs/snakemake_log/create_db/chr14.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 103: GENOTYPING - chr6
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr6_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr6_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr6_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr6_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr6_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 117: GENOTYPING - chr13
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr13_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr13_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr13_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr13_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr13_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 131: GENOTYPING - chr20
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr20_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr20_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr20_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr20_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr20_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 121: GENOTYPING - chr15
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr15_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr15_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr15_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr15_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr15_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 107: GENOTYPING - chr8
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr8_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr8_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr8_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr8_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr8_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 135: GENOTYPING - chr22
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr22_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr22_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr22_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr22_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr22_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 1: GENOTYPING - chr1
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr1_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr1_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr1_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr1_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr1_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 113: GENOTYPING - chr11
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr11_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr11_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr11_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr11_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr11_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 97: GENOTYPING - chr3
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr3_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr3_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr3_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr3_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr3_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 111: GENOTYPING - chr10
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr10_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr10_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr10_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr10_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr10_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 125: GENOTYPING - chr17
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr17_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr17_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr17_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr17_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr17_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 115: GENOTYPING - chr12
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr12_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr12_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr12_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr12_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr12_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 101: GENOTYPING - chr5
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr5_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr5_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr5_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr5_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr5_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 129: GENOTYPING - chr19
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr19_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr19_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr19_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr19_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr19_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 105: GENOTYPING - chr7
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr7_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr7_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr7_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr7_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr7_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 133: GENOTYPING - chr21
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr21_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr21_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr21_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr21_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr21_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 119: GENOTYPING - chr14
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr14_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr14_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr14_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr14_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr14_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 95: GENOTYPING - chr2
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr2_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr2_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr2_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr2_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr2_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 109: GENOTYPING - chr9
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr9_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr9_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr9_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr9_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr9_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 127: GENOTYPING - chr18
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr18_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr18_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr18_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr18_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr18_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 137: GENOTYPING - chrX
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chrX_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chrX_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chrX_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chrX_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chrX_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 123: GENOTYPING - chr16
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr16_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr16_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr16_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr16_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr16_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 99: GENOTYPING - chr4
+Reason: Missing output files: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr4_unphased_genotypes.vcf.gz; Input files updated by another job: data/variants_DB/chr4_db
+
+
+        (gatk GenotypeGVCFs -R resource/genome_files/Homo_sapiens_assembly38.fasta -V gendb://data/variants_DB/chr4_db -O data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr4_unphased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr4_unphased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 145: PHASING VCFs - chr7
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr7_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr7_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr7_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr7.b38.gmap.gz --region chr7 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr7_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr7_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr7_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 159: PHASING VCFs - chr21
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr21_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr21_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr21_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr21.b38.gmap.gz --region chr21 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr21_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr21_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr21_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 152: PHASING VCFs - chr14
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr14_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr14_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr14_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr14.b38.gmap.gz --region chr14 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr14_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr14_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr14_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 149: PHASING VCFs - chr11
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr11_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr11_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr11_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr11.b38.gmap.gz --region chr11 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr11_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr11_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr11_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 156: PHASING VCFs - chr18
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr18_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr18_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr18_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr18.b38.gmap.gz --region chr18 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr18_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr18_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr18_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 142: PHASING VCFs - chr4
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr4_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr4_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr4_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr4.b38.gmap.gz --region chr4 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr4_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr4_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr4_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 146: PHASING VCFs - chr8
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr8_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr8_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr8_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr8.b38.gmap.gz --region chr8 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr8_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr8_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr8_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 160: PHASING VCFs - chr22
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr22_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr22_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr22_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr22.b38.gmap.gz --region chr22 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr22_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr22_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr22_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 139: PHASING VCFs - chr1
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr1_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr1_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr1_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr1.b38.gmap.gz --region chr1 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr1_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr1_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr1_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 153: PHASING VCFs - chr15
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr15_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr15_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr15_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr15.b38.gmap.gz --region chr15 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr15_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr15_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr15_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 141: PHASING VCFs - chr3
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr3_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr3_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr3_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr3.b38.gmap.gz --region chr3 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr3_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr3_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr3_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 150: PHASING VCFs - chr12
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr12_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr12_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr12_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr12.b38.gmap.gz --region chr12 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr12_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr12_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr12_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 157: PHASING VCFs - chr19
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr19_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr19_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr19_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr19.b38.gmap.gz --region chr19 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr19_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr19_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr19_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 143: PHASING VCFs - chr5
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr5_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr5_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr5_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr5.b38.gmap.gz --region chr5 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr5_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr5_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr5_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 147: PHASING VCFs - chr9
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr9_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr9_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr9_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr9.b38.gmap.gz --region chr9 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr9_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr9_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr9_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 161: PHASING VCFs - chrX
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chrX_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chrX_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chrX_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chrX.b38.gmap.gz --region chrX --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chrX_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chrX_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chrX_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 140: PHASING VCFs - chr2
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr2_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr2_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr2_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr2.b38.gmap.gz --region chr2 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr2_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr2_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr2_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 154: PHASING VCFs - chr16
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr16_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr16_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr16_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr16.b38.gmap.gz --region chr16 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr16_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr16_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr16_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 151: PHASING VCFs - chr13
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr13_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr13_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr13_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr13.b38.gmap.gz --region chr13 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr13_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr13_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr13_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 144: PHASING VCFs - chr6
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr6_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr6_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr6_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr6.b38.gmap.gz --region chr6 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr6_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr6_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr6_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 158: PHASING VCFs - chr20
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr20_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr20_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr20_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr20.b38.gmap.gz --region chr20 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr20_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr20_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr20_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 148: PHASING VCFs - chr10
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr10_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr10_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr10_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr10.b38.gmap.gz --region chr10 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr10_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr10_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr10_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
+Job 155: PHASING VCFs - chr17
+Reason: Missing output files: data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr17_phased_genotypes.vcf.gz; Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr17_unphased_genotypes.vcf.gz
+
+
+        (shapeit4 --input data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr17_unphased_genotypes.vcf.gz --map resource/genetic_maps-b38/chr17.b38.gmap.gz --region chr17 --output data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr17_phased_genotypes.vcf.gz --thread 4 && tabix -p vcf data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr17_phased_genotypes.vcf.gz) 2> logs/snakemake_log/genotype_gvcfs/chr17_phased.log
+        
+
+[Fri Mar 10 14:13:33 2023]
 localrule all:
-    input: data/raw_samples/sam_files/SRR11856372.sam, data/raw_samples/sam_files/SRR11856305.sam, data/raw_samples/sam_files/SRR11856407.sam, data/raw_samples/sam_files/SRR11856288.sam, data/raw_samples/sam_files/SRR11856200.sam, data/raw_samples/sam_files/SRR11856309.sam, data/raw_samples/sam_files/SRR11856198.sam, data/raw_samples/sam_files/SRR11856364.sam, data/raw_samples/sam_files/SRR11856245.sam, data/raw_samples/sam_files/SRR11856259.sam, data/raw_samples/sam_files/SRR11856379.sam, data/raw_samples/sam_files/SRR11856275.sam, data/raw_samples/sam_files/SRR11856199.sam, data/raw_samples/sam_files/SRR11856404.sam, data/raw_samples/sam_files/SRR11856269.sam, data/raw_samples/sam_files/SRR11856266.sam, data/raw_samples/sam_files/SRR11856235.sam, data/raw_samples/sam_files/SRR11856409.sam, data/raw_samples/sam_files/SRR11856439.sam, data/raw_samples/sorted_bam/SRR11856372.bam, data/raw_samples/sorted_bam/SRR11856305.bam, data/raw_samples/sorted_bam/SRR11856407.bam, data/raw_samples/sorted_bam/SRR11856288.bam, data/raw_samples/sorted_bam/SRR11856200.bam, data/raw_samples/sorted_bam/SRR11856309.bam, data/raw_samples/sorted_bam/SRR11856198.bam, data/raw_samples/sorted_bam/SRR11856364.bam, data/raw_samples/sorted_bam/SRR11856245.bam, data/raw_samples/sorted_bam/SRR11856259.bam, data/raw_samples/sorted_bam/SRR11856379.bam, data/raw_samples/sorted_bam/SRR11856275.bam, data/raw_samples/sorted_bam/SRR11856199.bam, data/raw_samples/sorted_bam/SRR11856404.bam, data/raw_samples/sorted_bam/SRR11856269.bam, data/raw_samples/sorted_bam/SRR11856266.bam, data/raw_samples/sorted_bam/SRR11856235.bam, data/raw_samples/sorted_bam/SRR11856409.bam, data/raw_samples/sorted_bam/SRR11856439.bam, data/raw_samples/merged_bam/ind_0.bam, data/raw_samples/merged_bam/ind_1.bam, data/raw_samples/merged_bam/ind_2.bam, data/raw_samples/merged_bam/ind_3.bam, data/raw_samples/merged_bam/ind_4.bam, data/raw_samples/deduplicated_bam/ind_0.bam, data/raw_samples/deduplicated_bam/ind_1.bam, data/raw_samples/deduplicated_bam/ind_2.bam, data/raw_samples/deduplicated_bam/ind_3.bam, data/raw_samples/deduplicated_bam/ind_4.bam, data/raw_samples/recalibrated_bam/ind_0.bam, data/raw_samples/recalibrated_bam/ind_1.bam, data/raw_samples/recalibrated_bam/ind_2.bam, data/raw_samples/recalibrated_bam/ind_3.bam, data/raw_samples/recalibrated_bam/ind_4.bam
+    input: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr1_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr2_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr3_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr4_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr5_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr6_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr7_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr8_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr9_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr10_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr11_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr12_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr13_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr14_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr15_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr16_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr17_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr18_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr19_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr20_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr21_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr22_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chrX_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr1_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr2_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr3_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr4_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr5_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr6_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr7_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr8_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr9_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr10_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr11_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr12_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr13_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr14_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr15_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr16_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr17_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr18_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr19_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr20_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr21_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr22_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chrX_phased_genotypes.vcf.gz
     jobid: 0
-    reason: Input files updated by another job: data/raw_samples/deduplicated_bam/ind_4.bam, data/raw_samples/merged_bam/ind_1.bam, data/raw_samples/deduplicated_bam/ind_0.bam, data/raw_samples/recalibrated_bam/ind_4.bam, data/raw_samples/recalibrated_bam/ind_1.bam, data/raw_samples/merged_bam/ind_2.bam, data/raw_samples/deduplicated_bam/ind_1.bam, data/raw_samples/merged_bam/ind_0.bam, data/raw_samples/deduplicated_bam/ind_3.bam, data/raw_samples/recalibrated_bam/ind_3.bam, data/raw_samples/merged_bam/ind_3.bam, data/raw_samples/merged_bam/ind_4.bam, data/raw_samples/recalibrated_bam/ind_2.bam, data/raw_samples/recalibrated_bam/ind_0.bam, data/raw_samples/deduplicated_bam/ind_2.bam
+    reason: Input files updated by another job: data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr13_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr7_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr16_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr8_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr4_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr11_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr1_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr13_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr17_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr14_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr15_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr11_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr3_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr1_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr21_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr15_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr19_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr12_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr10_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr6_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr9_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr10_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr7_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr8_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr12_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr4_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr14_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr5_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr20_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr6_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chrX_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr16_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr19_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr20_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr3_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr5_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chrX_phased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr17_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr18_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr22_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr2_unphased_genotypes.vcf.gz, data/final_vcfs/unphased_chromosomes/test_genotypes_2023_chr21_unphased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr22_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr2_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr9_phased_genotypes.vcf.gz, data/final_vcfs/phased_chromosomes/test_genotypes_2023_chr18_phased_genotypes.vcf.gz
     resources: mem_mb=8000, mem_mib=7630, disk_mb=<TBD>, tmpdir=/scratch/midway3/temi, partition=caslake, time=36:00:00, account=pi-haky
 
 Job stats:
-job                                count    min threads    max threads
--------------------------------  -------  -------------  -------------
-all                                    1              1              1
-merge_and_recalibrate_bam_files        5              1              1
-total                                  6              1              1
+job                     count    min threads    max threads
+--------------------  -------  -------------  -------------
+add_read_groups             5              1              1
+all                         1              1              1
+apply_recalibration         5              1              1
+call_haplotypes             5              1              1
+create_recalibration        5              1              1
+create_variants_DB         23              1              1
+genotype_gvcfs             23              1              1
+mark_duplicates             5              1              1
+merge_bam_files             5              1              1
+phase_vcfs                 23              1              1
+reblock_gvcf                5              1              1
+total                     105              1              1
 
 Reasons:
     (check individual jobs above for details)
+    code has changed since last execution:
+        add_read_groups, merge_bam_files
     input files updated by another job:
-        all
+        add_read_groups, all, apply_recalibration, call_haplotypes, create_recalibration, create_variants_DB, genotype_gvcfs, mark_duplicates, phase_vcfs, reblock_gvcf
     missing output files:
-        merge_and_recalibrate_bam_files
+        add_read_groups, apply_recalibration, call_haplotypes, create_recalibration, create_variants_DB, genotype_gvcfs, mark_duplicates, merge_bam_files, phase_vcfs, reblock_gvcf
+    params have changed since last execution:
+        add_read_groups, merge_bam_files
+Some jobs were triggered by provenance information, see 'reason' section in the rule displays above.
+If you prefer that only modification time is used to determine whether a job shall be executed, use the command line option '--rerun-triggers mtime' (also see --help).
+If you are sure that a change for a certain output file (say, <outfile>) won't change the result (e.g. because you just changed the formatting of a script or environment definition), you can also wipe its metadata to skip such a trigger via 'snakemake --cleanup-metadata <outfile>'. 
+Rules with provenance triggered jobs: add_read_groups,merge_bam_files
+
 
 This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
