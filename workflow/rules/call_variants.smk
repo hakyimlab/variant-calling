@@ -56,7 +56,7 @@ rule create_variants_DB:
         create_db_out=os.path.join(LOG_DIR, 'create_db/{chrom}.log')
     shell:
         """
-        (gatk GenomicsDBImport -V {params.input_samples} --genomicsdb-workspace-path {params.scratch_chrom_db} --intervals {wildcards.chrom} --tmp-dir {params.temporary_dir} && cp -r {params.scratch_chrom_db} {output.variant_chrom_db}) 2> {log.create_db_out}
+        (gatk GenomicsDBImport -V {params.input_samples} --genomicsdb-workspace-path {params.scratch_chrom_db} --intervals {wildcards.chrom} --tmp-dir {params.temporary_dir} && mv {params.scratch_chrom_db}/* {output.variant_chrom_db}) 2> {log.create_db_out}
         """
 
 
